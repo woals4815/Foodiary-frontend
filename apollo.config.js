@@ -1,9 +1,9 @@
 module.exports = {
   client: {
-    includes: ["./src/**/*.{tsx,ts}"],
+    includes: ["./**/*.{tsx,ts}"],
     tagName: "gql",
     service: {
-      name: "uber-eats-backend",
+      name: "food-app-backend",
       url: "http://localhost:4000/graphql",
     },
   },
