@@ -15,6 +15,11 @@ export interface CreateAccountInput {
   profilePic?: string | null;
 }
 
+export interface LoginIntput {
+  email: string;
+  password: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

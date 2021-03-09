@@ -54,7 +54,6 @@ export default ({navigation, route}: any) => {
     const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<ICreateAccountFrom>({
         mode: 'onChange'
     });
-    console.log(navigation);
     const onCompleted = (data: createAccountMutation) => {
         const {
             createAccount: 
@@ -62,12 +61,24 @@ export default ({navigation, route}: any) => {
                 ok, error
                 
         }} =data;
-        console.log(ok, error);
         if (ok){
-            Alert.alert("Join Success!", " Let's log in 🚀");
-            navigation.navigate({
-                name: "Login"
-            });
+            Alert.alert("Join Success!", " Let's log in 🚀", [
+                {
+                    text: "Go to Log In",
+                    onPress: () => {
+                        navigation.navigate({
+                            name: "Login"
+                        });
+                    },
+                    
+                },
+                {
+                    text: "Later",
+                    onPress: () => {
+                        return;
+                    }
+                }
+            ]);
         }
     }
     const [createAccountMutation, {loading, data, error}] = useMutation<createAccountMutation, createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, {

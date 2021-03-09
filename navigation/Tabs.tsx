@@ -6,11 +6,13 @@ import { isLoggedInVar } from "../apollo";
 import Home from "../screens/Home";
 import Login from "../screens/Login";
 import Join from "../screens/Join";
+import AddDiary from "../screens/AddDiary";
+import EditProfile from "../screens/EditProfile";
 
 const Tabs = createBottomTabNavigator();
 
 const getHeaderName = (route: any) => {
-    const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "Join";
     return routeName; //route?.state?.routeNames[route.state.index] || "Movies"; (temporary solution)
   };
 export default (props: any) => {
@@ -29,11 +31,14 @@ export default (props: any) => {
                     color: "black"
                 },
                 style: {
-                    height: "7%"
-                }
+                    height: "7%",
+                },
+                activeBackgroundColor: "red"
             }}
         >
             <Tabs.Screen name="Home" component={Home}/>
+            <Tabs.Screen name="AddDiary" component={AddDiary} />
+            <Tabs.Screen name="EditProfile" component={EditProfile} />
         </Tabs.Navigator>
     ): (
     <Tabs.Navigator>

@@ -1,11 +1,10 @@
 import { ApolloClient, createHttpLink, InMemoryCache, makeVar } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from "@react-native-community/async-storage";
-import { onError } from "apollo-link-error";
 import { LOCALSTORAGE_TOKEN } from "./constants";
 
 
-let token;
+let token: string | null | undefined;
 
 AsyncStorage.getItem(LOCALSTORAGE_TOKEN, (error, result) => {
     token = result;
