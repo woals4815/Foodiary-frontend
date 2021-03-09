@@ -6,7 +6,7 @@ const TextInput = styled.TextInput`
     color: black;
     margin-bottom: 15px;
     width: 80%;
-    borderBottomWidth : 1.5;
+    borderBottomWidth : 1.5px;
     height: 5%;
     font-size: 20px;
 ` 

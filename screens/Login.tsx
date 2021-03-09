@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 
+
 const Container = styled.View`
     height: 100%;
     width: 100%;

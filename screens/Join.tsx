@@ -1,13 +1,13 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { TextInput } from "react-native";
 import styled from "styled-components/native";
 import JoinButton from "../components/Button";
 import Input from "../components/Input";
 import Password from "../components/Password";
+import {useMutation} from "@apollo/client/react/hooks";
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
-
+import { Alert } from "react-native";
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -24,6 +24,7 @@ interface ICreateAccountFrom {
     password: string;
     confirmPassword: string;
     name: string;
+    profilePic?: string;
 }
 
 const Container = styled.View`
@@ -49,24 +50,48 @@ const Text = styled.Text`
     font-weight: 500;
 `
 
-export default () => {
-    const {register, handleSubmit, watch, errors, setValue} = useForm<ICreateAccountFrom>({
+export default ({navigation, route}: any) => {
+    const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<ICreateAccountFrom>({
         mode: 'onChange'
     });
-    const onSubmit = (data: createAccountMutation) => {
-        
-    }
+    console.log(navigation);
     const onCompleted = (data: createAccountMutation) => {
-        const {createAccount: 
-            {ok
+        const {
+            createAccount: 
+            {
+                ok, error
+                
         }} =data;
+        console.log(ok, error);
         if (ok){
-            console.log("It's workkkkkkk!!!");
+            Alert.alert("Join Success!", " Let's log in 🚀");
+            navigation.navigate({
+                name: "Login"
+            });
         }
     }
-    const [createAccountMutation, {loading, data}] = useMutation<createAccountMutation, createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, {
+    const [createAccountMutation, {loading, data, error}] = useMutation<createAccountMutation, createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, {
         onCompleted
     });
+    const onSubmit = async() => {
+        const {email, name, password, confirmPassword} =  await getValues();
+            if (!loading){
+                try{
+                    await createAccountMutation({
+                        variables: {
+                            createAccountInput: {
+                                email,
+                                name,
+                                password,
+                                confirmPassword,
+                            }
+                        }
+                    });
+                 }catch(error){
+                     console.log(error);
+                 }
+            }
+    }
     useEffect(() => {
         register('email');
         register('password');
