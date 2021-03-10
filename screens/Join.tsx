@@ -61,6 +61,7 @@ export default ({navigation, route}: any) => {
                 ok, error
                 
         }} =data;
+        console.log(ok, error);
         if (ok){
             Alert.alert("Join Success!", " Let's log in 🚀", [
                 {

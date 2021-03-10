@@ -15,6 +15,13 @@ export interface CreateAccountInput {
   profilePic?: string | null;
 }
 
+export interface CreateDiaryInput {
+  description?: string | null;
+  images?: string[] | null;
+  publicOrNot?: boolean | null;
+  rating?: number | null;
+}
+
 export interface LoginIntput {
   email: string;
   password: string;

@@ -36,15 +36,19 @@ export default () => {
     });
     
     const onCompleted = async(data: loginMutation) => {
-        const {login: 
-            { ok, token, error}
-        } = data;
-        console.log(ok, token);
-        if (ok && token) {
-            await AsyncStorage.setItem(LOCALSTORAGE_TOKEN, token);
-            authTokenVar(token);
-            isLoggedInVar(true);
-        }
+            try{
+            const {
+                login: 
+                { ok, token, error}
+            } = data;
+            console.log(ok, token);
+            if (ok && token) {
+                await AsyncStorage.setItem(LOCALSTORAGE_TOKEN, token);
+                authTokenVar(token);
+                isLoggedInVar(true);
+            }}catch(error){
+                console.log(error);
+            }
     }
     const [loginMutation, {data, loading, error}] = useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
         onCompleted
