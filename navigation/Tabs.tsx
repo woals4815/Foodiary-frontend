@@ -26,7 +26,7 @@ const tabBarStyles = {
     inactiveBackgroundColor: "#F9F3F3"
 }
 
-const getHeaderName = (route: any) => {
+export const getHeaderName = (route: any) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Join";
     return routeName; //route?.state?.routeNames[route.state.index] || "Movies"; (temporary solution)
   };

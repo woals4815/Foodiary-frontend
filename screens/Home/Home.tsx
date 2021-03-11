@@ -50,7 +50,6 @@ export const GET_ALL_DIARIES = gql`
 
 export default () => {
   const {data, error, loading} = useQuery<getAllDiaries>(GET_ALL_DIARIES);
-  console.log(data, error, loading);
   return (
       <Container>
         {data?.getAllDiaries.diaries?.map(diary => <Text key={diary.id}>{diary.description}</Text>)}
