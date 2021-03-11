@@ -6,6 +6,8 @@ import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
 import * as MediaLibrary from 'expo-media-library';
+import Swiper from "react-native-web-swiper";
+import ImagePresenter from "../../components/ImagePresenter";
 
 
 
@@ -19,13 +21,8 @@ const Container = styled.View`
     width: 100%;
 `;
 const ImageContainer = styled.View`
-    flex: 1;
-    flex-direction: row;
-    flexWrap: wrap;
-`
-const Image = styled.Image`
-    width: ${WIDTH / 3}px;
-    height: ${WIDTH / 3}px;
+    width: ${WIDTH/ 1.5}px;
+    height: ${HEIGHT / 4}px;
 `;
 
 const Text = styled.Text`
@@ -34,10 +31,10 @@ const Text = styled.Text`
 const ButtonContainer = styled.View`
     padding: 7px;
     background-color: blue;
-`
+`;
 const ButtonText=styled.Text`
     font-size: 20px;
-`
+`;
 
 const CREATE_DIARY_MUTATION = gql`
     mutation createDiaryMutation($createDiaryMutationInput: CreateDiaryInput!){
@@ -51,7 +48,7 @@ const CREATE_DIARY_MUTATION = gql`
 
 export default (props: any) => {
     const [images, setImages] = useState<any>([]);
-    const {
+    let {
       navigation, route: { params } 
     } = props;
     const onCompleted = () => {
@@ -68,13 +65,16 @@ export default (props: any) => {
         if (params?.selectImages) {
             setImages(params?.selectImages);
         }
-    }, [params?.selectImages]);
+    }, [params?.selectImages, images]);
     const onPress = async() => {
         const result= await MediaLibrary.getAssetsAsync();
         const {assets: images} = result;
         navigation.navigate("CameraRoll", {images});
     }
     const deleteAllImage = () => {
+        if (params?.selectImages.length > 0) {
+            params?.selectImages.splice(0, params?.selectImages.length);
+        }
         setImages([]);
     }
     console.log(images);
@@ -82,14 +82,18 @@ export default (props: any) => {
     const [createDiaryMutation, {data, loading, error}] = useMutation<createDiaryMutation, createDiaryMutationVariables>(CREATE_DIARY_MUTATION);
     return (
             <Container>
+                {images.length > 0 && (
+                    <ImageContainer>
+                        <Swiper controlsEnabled={false}>
+                            {images?.map((image: any, index: any) => (
+                                <ImagePresenter imageUri={image} key={index} />
+                            ))}
+                        </Swiper>
+                    </ImageContainer>
+                )}
                 <TouchableOpacity onPress={onPress}>
                     <Text>Let's Image!</Text>
                 </TouchableOpacity>
-                <ImageContainer>
-                    {images && (
-                        images.map((image, index) => <Image source={{uri: image}} key={index} />)
-                    )}
-                </ImageContainer>
                 {images.length > 0 && (
                     <TouchableOpacity onPress={deleteAllImage}>
                         <ButtonContainer>
