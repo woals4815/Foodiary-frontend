@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
 import Swiper from "react-native-web-swiper";
 import styled from "styled-components/native";
+import ScrollContainer from "./ScrollContainer";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -19,9 +20,9 @@ const Image = styled.Image`
 
 const ImagePresenter = ({imageUri}: any) => {
     return (
-        <Container>
-            <Image source={{uri: imageUri}} />
-        </Container>
+            <Container>
+                <Image source={{uri: imageUri}} />
+            </Container>
     )
 }
 

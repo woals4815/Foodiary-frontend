@@ -1,13 +1,15 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Dimensions, Platform, TouchableOpacity, View } from "react-native";
+import { Button, Dimensions, Platform, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
 import * as MediaLibrary from 'expo-media-library';
 import Swiper from "react-native-web-swiper";
 import ImagePresenter from "../../components/ImagePresenter";
+import JoinButton from "../../components/Button";
+import axios from "axios";
 
 
 
@@ -35,6 +37,7 @@ const ButtonContainer = styled.View`
 const ButtonText=styled.Text`
     font-size: 20px;
 `;
+const Hello = styled.View``;
 
 const CREATE_DIARY_MUTATION = gql`
     mutation createDiaryMutation($createDiaryMutationInput: CreateDiaryInput!){
@@ -46,13 +49,41 @@ const CREATE_DIARY_MUTATION = gql`
     }
 `;
 
+
 export default (props: any) => {
     const [images, setImages] = useState<any>([]);
+    const [uploadImages, setUploadImages] = useState<any>([]);
     let {
       navigation, route: { params } 
     } = props;
     const onCompleted = () => {
     }
+    const onPress = async() => {
+        const result= await MediaLibrary.getAssetsAsync({first: 300});
+        const {assets: images} = result;
+        navigation.navigate("CameraRoll", {images});
+    }
+    const deleteAllImage = () => {
+        if (params?.selectImages.length > 0) {
+            params?.selectImages.splice(0, params?.selectImages.length);
+        }
+        setImages([]);
+    }
+    const onSubmit = async() => {
+        const bodyFormData = new FormData();
+        images.forEach(image => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
+        const {data} = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
+            method: 'post',
+            data: bodyFormData,
+            headers: {
+                'content-type': 'multipart/form-data',
+            },
+        });
+        setUploadImages([]);
+        setUploadImages(data);
+    }
+    const {setValue, getValues, errors, register, handleSubmit} = useForm();
+    const [createDiaryMutation, {data, loading, error}] = useMutation<createDiaryMutation, createDiaryMutationVariables>(CREATE_DIARY_MUTATION);
     useEffect(() => {
         (async () => {
           if (Platform.OS !== 'web') {
@@ -65,31 +96,20 @@ export default (props: any) => {
         if (params?.selectImages) {
             setImages(params?.selectImages);
         }
-    }, [params?.selectImages, images]);
-    const onPress = async() => {
-        const result= await MediaLibrary.getAssetsAsync();
-        const {assets: images} = result;
-        navigation.navigate("CameraRoll", {images});
-    }
-    const deleteAllImage = () => {
-        if (params?.selectImages.length > 0) {
-            params?.selectImages.splice(0, params?.selectImages.length);
-        }
-        setImages([]);
-    }
-    console.log(images);
-    const {setValue, getValues, errors, register, handleSubmit} = useForm();
-    const [createDiaryMutation, {data, loading, error}] = useMutation<createDiaryMutation, createDiaryMutationVariables>(CREATE_DIARY_MUTATION);
+        register('description');
+    }, [params?.selectImages, images, register]);
     return (
             <Container>
                 {images.length > 0 && (
-                    <ImageContainer>
-                        <Swiper controlsEnabled={false}>
-                            {images?.map((image: any, index: any) => (
-                                <ImagePresenter imageUri={image} key={index} />
-                            ))}
-                        </Swiper>
-                    </ImageContainer>
+                    <>
+                        <ImageContainer>
+                            <Swiper controlsEnabled={false}>
+                                {images?.map((image: any, index: any) => (
+                                    <ImagePresenter imageUri={image.uri} key={image.id} />
+                                ))}
+                            </Swiper>
+                        </ImageContainer>
+                    </>
                 )}
                 <TouchableOpacity onPress={onPress}>
                     <Text>Let's Image!</Text>
@@ -100,6 +120,27 @@ export default (props: any) => {
                             <ButtonText>Delete All images</ButtonText>
                         </ButtonContainer>
                     </TouchableOpacity>
+                )}
+                <Input placeholder={"Write Description"} onChange={(text:string) => setValue('description', text)} />
+                <JoinButton 
+                    title={"Create Diary!"}
+                    onPress={handleSubmit(onSubmit)}
+                />
+                {uploadImages.length > 1 && (
+                    <ImageContainer>
+                        <Swiper controlsEnabled={false}>
+                            {uploadImages?.map((uri: any, index: any) => (
+                                <ImagePresenter imageUri={uri} key={index} />
+                            ))}
+                        </Swiper>
+                    </ImageContainer>
+                )}
+                {uploadImages.length === 1 && (
+                    <ImageContainer>
+                        <Swiper controlsEnabled={false}>
+                            <ImagePresenter imageUri={uploadImages[0]} key={0} />
+                        </Swiper>
+                    </ImageContainer>
                 )}
             </Container>
     )
