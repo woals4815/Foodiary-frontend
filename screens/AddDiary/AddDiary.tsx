@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Dimensions, Platform, TextInput, TouchableOpacity, View } from "react-native";
+import {  Alert, Dimensions, Platform, Switch, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
@@ -10,8 +10,8 @@ import Swiper from "react-native-web-swiper";
 import ImagePresenter from "../../components/ImagePresenter";
 import JoinButton from "../../components/Button";
 import axios from "axios";
-
-
+import Slider from '@react-native-community/slider';
+import ScrollContainer from "../../components/ScrollContainer";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -51,27 +51,59 @@ const CREATE_DIARY_MUTATION = gql`
 
 
 export default (props: any) => {
+    // state 항목 관리
     const [images, setImages] = useState<any>([]);
     const [uploadImages, setUploadImages] = useState<any>([]);
+    const [isEnabled, setIsEnabled] = useState(false);
+    const [rangeValue, setRangeValue] = useState(3);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const {setValue, getValues, errors, register, handleSubmit} = useForm({
+        mode: 'onChange'
+    });
     let {
       navigation, route: { params } 
     } = props;
-    const onCompleted = () => {
+    //mutation을 마쳤을 때
+    const onCompleted = (data: createDiaryMutation) => {
+        console.log(data);
+        const {
+            createDiary: {
+                ok, error, diaryId
+            }
+        } = data;
+        if (ok) {
+            Alert.alert("Create your FooDiary!", "Let's go to check 🚀", [
+                {
+                    text: "OK",
+                    onPress: () => {
+                        navigation.navigate({
+                            name: 'MyDiary'
+                        });
+                    },
+                },
+            ]);
+        }
     }
+    //앨범 버튼 누른 순간
     const onPress = async() => {
         const result= await MediaLibrary.getAssetsAsync({first: 300});
         const {assets: images} = result;
         navigation.navigate("CameraRoll", {images});
     }
+    //이미지 선택 항목 싹 지우기
     const deleteAllImage = () => {
         if (params?.selectImages.length > 0) {
             params?.selectImages.splice(0, params?.selectImages.length);
         }
         setImages([]);
     }
+    //submit 버튼 누른 순간
+    const [createDiaryMutation, {data, loading, error}] = useMutation<createDiaryMutation, createDiaryMutationVariables>(CREATE_DIARY_MUTATION, {
+        onCompleted
+    });
     const onSubmit = async() => {
         const bodyFormData = new FormData();
-        images.forEach(image => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
+        images.forEach((image: any) => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
         const {data} = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
             method: 'post',
             data: bodyFormData,
@@ -81,9 +113,26 @@ export default (props: any) => {
         });
         setUploadImages([]);
         setUploadImages(data);
+        const {description, rating} = getValues();
+        console.log(loading);
+        if (!loading) {
+            try {
+                await createDiaryMutation({
+                    variables: {
+                        createDiaryMutationInput: {
+                            description,
+                            publicOrNot: isEnabled,
+                            images: data,
+                            rating
+                        }
+                    }
+                });
+            }catch(error){ 
+                console.log(error);
+            }
+        }
+        
     }
-    const {setValue, getValues, errors, register, handleSubmit} = useForm();
-    const [createDiaryMutation, {data, loading, error}] = useMutation<createDiaryMutation, createDiaryMutationVariables>(CREATE_DIARY_MUTATION);
     useEffect(() => {
         (async () => {
           if (Platform.OS !== 'web') {
@@ -97,9 +146,11 @@ export default (props: any) => {
             setImages(params?.selectImages);
         }
         register('description');
+        register('rating');
     }, [params?.selectImages, images, register]);
     return (
-            <Container>
+        <>
+            <ScrollContainer>
                 {images.length > 0 && (
                     <>
                         <ImageContainer>
@@ -121,27 +172,45 @@ export default (props: any) => {
                         </ButtonContainer>
                     </TouchableOpacity>
                 )}
-                <Input placeholder={"Write Description"} onChange={(text:string) => setValue('description', text)} />
                 <JoinButton 
                     title={"Create Diary!"}
                     onPress={handleSubmit(onSubmit)}
                 />
-                {uploadImages.length > 1 && (
-                    <ImageContainer>
-                        <Swiper controlsEnabled={false}>
-                            {uploadImages?.map((uri: any, index: any) => (
-                                <ImagePresenter imageUri={uri} key={index} />
-                            ))}
-                        </Swiper>
-                    </ImageContainer>
-                )}
-                {uploadImages.length === 1 && (
-                    <ImageContainer>
-                        <Swiper controlsEnabled={false}>
-                            <ImagePresenter imageUri={uploadImages[0]} key={0} />
-                        </Swiper>
-                    </ImageContainer>
-                )}
-            </Container>
+                <Slider
+                    style={{width: 200, height: 40}}
+                    minimumValue={0}
+                    maximumValue={5}
+                    minimumTrackTintColor="#FFFFFF"
+                    maximumTrackTintColor="#000000"
+                    onValueChange={(value) => {
+                        setRangeValue(value);
+                        setValue('rating',value);
+                    }}
+                    step={1}
+                    value={rangeValue}
+                />
+                <Text>{rangeValue}</Text>
+                <Switch 
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                    ref={register}
+                />
+                <Input 
+                    placeholder={"Write Description"} 
+                    onChange={(text:string) => setValue('description', text)} 
+                    inputStyle={{
+                        height: "70%",
+                        flexShrink: 1,
+                    }}
+                    multiline={true}
+                />
+                <TouchableOpacity onPress={() => navigation.navigate("MyDiary")}>
+                    <Text>Go to My Diary</Text>
+                </TouchableOpacity>
+            </ScrollContainer>
+        </>
     )
 }

@@ -11,10 +11,14 @@ const TextInput = styled.TextInput`
     font-size: 20px;
 ` 
 
-const Input = ({placeholder, onChange}: any) => (
+const Input = ({placeholder, onChange, inputStyle, multiline}: any) => (
     <TextInput 
         placeholder={placeholder}
         onChangeText={onChange}
+        style={{
+            ...inputStyle
+        }}
+        multiline={multiline}
     />
 )
 

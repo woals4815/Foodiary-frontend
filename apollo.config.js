@@ -4,7 +4,7 @@ module.exports = {
     tagName: "gql",
     service: {
       name: "food-app-backend",
-      url: "http://localhost:4000/graphql",
+      url: "https://food-vicion-backend.herokuapp.com/graphql",
     },
   },
 };
