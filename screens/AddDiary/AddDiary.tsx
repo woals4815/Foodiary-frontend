@@ -6,12 +6,12 @@ import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
 import * as MediaLibrary from 'expo-media-library';
-import Swiper from "react-native-web-swiper";
 import ImagePresenter from "../../components/ImagePresenter";
 import JoinButton from "../../components/Button";
 import axios from "axios";
 import Slider from '@react-native-community/slider';
 import ScrollContainer from "../../components/ScrollContainer";
+import Swiper from "react-native-swiper";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -154,7 +154,7 @@ export default (props: any) => {
                 {images.length > 0 && (
                     <>
                         <ImageContainer>
-                            <Swiper controlsEnabled={false}>
+                            <Swiper showsButtons={false}>
                                 {images?.map((image: any, index: any) => (
                                     <ImagePresenter imageUri={image.uri} key={image.id} />
                                 ))}
