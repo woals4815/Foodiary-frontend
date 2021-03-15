@@ -8,7 +8,8 @@ const ScrollContainer = ({ children, contentContainerStyle }: any) => {
         <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-                backgroundColor: "white"
+                backgroundColor: "white",
+                ...contentContainerStyle
             }}
         >
             {children}

@@ -17,6 +17,7 @@ const commonStyle = {
 const Container = styled.View`
     flex: 1;
     align-items: center;
+    background-color:#94B5C0;
 `;
 const CardContainer = styled.View`
     width: ${WIDTH / 1.2}px;

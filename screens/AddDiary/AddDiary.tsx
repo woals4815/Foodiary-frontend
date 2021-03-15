@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {  Alert, Dimensions, Platform, Switch, TouchableOpacity } from "react-native";
+import {  Alert, Dimensions, Keyboard, Platform, Switch, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
@@ -17,32 +17,70 @@ const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     background-color: white;
-    height: 100%;
+    flex: 1;
 `;
 const InputsContainer = styled.View`
-    width: ${WIDTH / 1.2}px;
-    height: ${HEIGHT/ 2}px;
-    border-radius: 14px;
-    margin-top: 60px;
+    width: ${WIDTH}px;
+    height: ${HEIGHT}px;
     background-color: #94B5C0;
     align-items: center;
     justify-content: center;
     box-shadow: 0px 0px 4px #94B5C0;
+    paddingHorizontal: 20px;
 `
 const ImageContainer = styled.View`
-    width: ${WIDTH/ 1.5}px;
-    height: ${HEIGHT / 4}px;
+    width: 100%;
+    height: ${HEIGHT / 2}px;
+    padding-bottom: 30px;
 `;
+const DescriptionContainer = styled.View`
+    height: ${HEIGHT/4}px;
+    width: 100%;
+    justify-content: center;
+`
+const PublicContainer = styled.View`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+`
+
+const PublicTextContaier = styled.View`
+    paddingVertical: 7px;
+    paddingHorizontal: 10px;
+    background-color: gray;
+    border-radius: 50;
+`
+const PublicText = styled.Text`
+    font-size: 12px;
+    color: #FED048;
+    font-weight: 700;
+`
+
+const RangeContainer = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+`
+const RangeTextContainer = styled.View`
+    paddingVertical: 7px;
+    paddingHorizontal: 10px;
+    background-color: gray;
+    border-radius: 50;
+`
 
 const Text = styled.Text`
-    font-size: 20px;
+    font-size: 12px;
+    color: #FED048;
+    font-weight: 700;
 `;
 const ButtonContainer = styled.View`
-    padding: 7px;
-    background-color: blue;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
 `;
 const ButtonText=styled.Text`
     font-size: 20px;
@@ -59,7 +97,7 @@ const CREATE_DIARY_MUTATION = gql`
 `;
 
 
-export default (props: any) => {
+const AddDiary =  (props: any) => {
     // state 항목 관리
     const [images, setImages] = useState<any>([]);
     const [uploadImages, setUploadImages] = useState<any>([]);
@@ -92,6 +130,8 @@ export default (props: any) => {
                 },
             ]);
         }
+        setValue("description", "");
+        deleteAllImage();
     }
     //앨범 버튼 누른 순간
     const onPress = async() => {
@@ -158,68 +198,138 @@ export default (props: any) => {
         register('rating');
     }, [params?.selectImages, images, register]);
     return (
-        <Container>
+        <TouchableWithoutFeedback
+            onPress={() => Keyboard.dismiss()}
+        >
             <ScrollContainer>
+                <InputsContainer>
+                <ImageContainer>
                 {images.length > 0 && (
                     <>
-                        <ImageContainer>
-                            <Swiper showsButtons={false}>
+                            <Swiper 
+                              showsButtons={false} 
+                              paginationStyle={{
+                                bottom: -25
+                              }}
+                            >
                                 {images?.map((image: any, index: any) => (
                                     <ImagePresenter imageUri={image.uri} key={image.id} />
                                 ))}
                             </Swiper>
-                        </ImageContainer>
                     </>
                 )}
-                <TouchableOpacity onPress={onPress}>
-                    <Text>Let's Image!</Text>
-                </TouchableOpacity>
-                {images.length > 0 && (
-                    <TouchableOpacity onPress={deleteAllImage}>
-                        <ButtonContainer>
-                            <ButtonText>Delete All images</ButtonText>
-                        </ButtonContainer>
-                    </TouchableOpacity>
+                </ImageContainer>
+                <ButtonContainer>
+                    <JoinButton 
+                        title={"Add pictures"}
+                        onPress={onPress}
+                        buttonStyle={{
+                            paddingVertical: 10,
+                            paddingHorizontal: 10,
+                            backgroundColor: "#FED048",
+                            borderRadius: "8px",
+                            shadowColor: "#FED048",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1
+                                },
+                            shadowOpacity: 0.7,
+                            marginBottom: "5%"
+                        }}
+                        textStyle={{
+                            fontWeight: "300"
+                        }}
+                    />
+                    {images.length > 0 && (
+                        <JoinButton 
+                        title={"Delete all"}
+                        onPress={deleteAllImage}
+                        buttonStyle={{
+                            paddingVertical: 10,
+                            paddingHorizontal: 10,
+                            backgroundColor: "#FED048",
+                            borderRadius: "8px",
+                            shadowColor: "#FED048",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 1
+                                },
+                            shadowOpacity: 0.7
+                        }}
+                        textStyle={{
+                            fontWeight: "300"
+                        }}
+                    />
                 )}
+                </ButtonContainer>
+                <RangeContainer>
+                    <RangeTextContainer>
+                        <Text>Rating: {rangeValue}</Text>
+                    </RangeTextContainer>
+                    <Slider
+                        style={
+                            {width: 200, height: 40, alignSelf: "flex-start" }
+                        }
+                        minimumValue={0}
+                        maximumValue={5}
+                        minimumTrackTintColor="#FED048"
+                        maximumTrackTintColor="#000000"
+                        onValueChange={(value) => {
+                            setRangeValue(value);
+                            setValue('rating',value);
+                        }}
+                        step={1}
+                        value={rangeValue}
+                    />
+                </RangeContainer>
+                <PublicContainer>
+                    <PublicTextContaier>
+                        <PublicText>Public ? </PublicText>
+                    </PublicTextContaier>
+                    <Switch 
+                        trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                        ref={register}
+                    />
+                </PublicContainer>
+                <DescriptionContainer>
+                    <Input 
+                        placeholder={"Write Description"} 
+                        onChange={(text:string) => setValue('description', text)} 
+                        inputStyle={{
+                            height: "70%",
+                            flexShrink: 1,
+                            fontSize: 13
+                        }}
+                        multiline={true}
+                    />
+                </DescriptionContainer>
                 <JoinButton 
                     title={"Create Diary!"}
                     onPress={handleSubmit(onSubmit)}
-                />
-                <Slider
-                    style={{width: 200, height: 40}}
-                    minimumValue={0}
-                    maximumValue={5}
-                    minimumTrackTintColor="#FFFFFF"
-                    maximumTrackTintColor="#000000"
-                    onValueChange={(value) => {
-                        setRangeValue(value);
-                        setValue('rating',value);
+                    buttonStyle={{
+                        paddingVertical: 10,
+                        paddingHorizontal: 10,
+                        backgroundColor: "#FED048",
+                        borderRadius: "8px",
+                        shadowColor: "#FED048",
+                            shadowOffset: {
+                                width: 0,
+                                height: 1
+                            },
+                        shadowOpacity: 0.7,
                     }}
-                    step={1}
-                    value={rangeValue}
-                />
-                <Text>{rangeValue}</Text>
-                <Switch 
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                    ref={register}
-                />
-                <Input 
-                    placeholder={"Write Description"} 
-                    onChange={(text:string) => setValue('description', text)} 
-                    inputStyle={{
-                        height: "70%",
-                        flexShrink: 1,
+                    textStyle={{
+                        fontWeight: "300"
                     }}
-                    multiline={true}
                 />
-                <TouchableOpacity onPress={() => navigation.navigate("MyDiary")}>
-                    <Text>Go to My Diary</Text>
-                </TouchableOpacity>
-            </ScrollContainer>
-        </Container>
+            </InputsContainer>
+            </ScrollContainer>    
+    </TouchableWithoutFeedback>
     )
 }
+
+export default AddDiary;

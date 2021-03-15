@@ -7,7 +7,8 @@ import Input from "../components/Input";
 import Password from "../components/Password";
 import {useMutation} from "@apollo/client/react/hooks";
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
-import { Alert, Dimensions } from "react-native";
+import { Alert, Dimensions, Keyboard } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -25,7 +26,8 @@ interface ICreateAccountFrom {
     confirmPassword: string;
     name: string;
     profilePic?: string;
-}
+};
+
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
@@ -35,7 +37,7 @@ const Container = styled.View`
     align-items:center;
     justify-content: flex-start;
     background-color: white;
-`
+`;
 const TextContainer = styled.View`
     flex-direction: column;
     justify-content: center;
@@ -43,28 +45,30 @@ const TextContainer = styled.View`
     background-color: #FED048;
     border-radius: 7;
     paddingVertical: 10;
-    paddingHorizontal: 20;
-    position: absolute;
+    paddingHorizontal: 80;
     top: 20px;
     box-shadow: 0px 2px 2px #FED048;
 `;
 const InputsContainer = styled.View`
-    width: ${WIDTH / 1.2}px;
-    height: ${HEIGHT/ 2}px;
-    border-radius: 14px;
-    margin-top: 60px;
+    width: ${WIDTH}px;
+    height: ${HEIGHT}px;
     background-color: #94B5C0;
+    justify-content: space-around;
     align-items: center;
-    justify-content: center;
     box-shadow: 0px 0px 4px #94B5C0;
-`
+`;
+const InputContainer = styled.View`
+    width: ${WIDTH / 1.5}px;
+    height: ${HEIGHT / 4}px;
+    justify-content: space-between;
+`;
 const Text = styled.Text`
     font-size: 25px;
     color: black;
     font-weight: 700;
-`
+`;
 
-export default ({navigation, route}: any) => {
+const Join =  ({navigation, route}: any) => {
     const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<ICreateAccountFrom>({
         mode: 'onChange'
     });
@@ -126,56 +130,62 @@ export default ({navigation, route}: any) => {
     },[register]);
     return (
         <>
-            <Container>
-                <InputsContainer>
-                    <TextContainer>
-                        <Text>Let's join!</Text>
-                    </TextContainer>
-                    <Input 
-                        placeholder={"Email"}
-                        onChange={(text: string) => {
-                            setValue('email', text);
-                        }}
-                    />
-                    <Input 
-                        placeholder={"Name"}
-                        onChange={(text: string) => {
-                            setValue('name', text);
-                        }}
-                    />
-                    <Password 
-                        placeholder={"Password"}
-                        onChange={(text: string) => {
-                            setValue('password', text);
-                        }}
-                    />
-                    <Password 
-                        placeholder={"Password for confirm"}
-                        onChange={(text: string) => {
-                            setValue('confirmPassword', text);
-                        }}
-                    />
-                    <JoinButton 
-                        title={"Join!"}
-                        onPress={handleSubmit(onSubmit)}
-                        buttonStyle={{
-                            backgroundColor: "#FED048",
-                            paddingHorizontal: 30,
-                            paddingVertical: 15,
-                            borderRadius: "8px",
-                            shadowColor: "#FED048",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2
-                            },
-                            shadowOpacity: 0.7
-                        }}
-                        textStyle={{
-                            fontWeight: "700"
-                        }}
-                    />
-                </InputsContainer>
-            </Container>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <Container>
+                    <InputsContainer>
+                        <TextContainer>
+                            <Text>FooDiary 😋</Text>
+                        </TextContainer>
+                        <InputContainer>
+                            <Input 
+                                placeholder={"Email"}
+                                onChange={(text: string) => {
+                                    setValue('email', text);
+                                }}
+                            />
+                            <Input 
+                                placeholder={"Name"}
+                                onChange={(text: string) => {
+                                    setValue('name', text);
+                                }}
+                            />
+                            <Password 
+                                placeholder={"Password"}
+                                onChange={(text: string) => {
+                                    setValue('password', text);
+                                }}
+                            />
+                            <Password 
+                                placeholder={"Password for confirm"}
+                                onChange={(text: string) => {
+                                    setValue('confirmPassword', text);
+                                }}
+                            />
+                        </InputContainer>
+                        <JoinButton 
+                            title={"Join"}
+                            onPress={handleSubmit(onSubmit)}
+                            buttonStyle={{
+                                backgroundColor: "#FED048",
+                                paddingHorizontal: 30,
+                                paddingVertical: 15,
+                                borderRadius: "8px",
+                                shadowColor: "#FED048",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2
+                                },
+                                shadowOpacity: 0.7
+                            }}
+                            textStyle={{
+                                fontWeight: "700"
+                            }}
+                        />
+                    </InputsContainer>
+                </Container>
+            </TouchableWithoutFeedback>
         </>
     )
-}
+};
+
+export default Join;

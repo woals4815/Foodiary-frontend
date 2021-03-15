@@ -10,10 +10,11 @@ export default () => (
     <Stack.Navigator
         screenOptions={{
             headerStyle: {
-                backgroundColor: "white",
-                borderBottomColor: "white",
-                shadowColor: "white"
-            }
+                backgroundColor: "#94B5C0",
+                borderBottomColor: "#94B5C0",
+                shadowColor: "#94B5C0",
+            },
+            headerTitleAlign: "center"
         }}
     >
         <Stack.Screen name={"Tabs"} component={Tabs} />

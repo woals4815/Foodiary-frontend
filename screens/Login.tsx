@@ -9,7 +9,8 @@ import Password from "../components/Password";
 import AsyncStorage from "@react-native-community/async-storage";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { authTokenVar, isLoggedInVar } from "../apollo";
-import { Dimensions } from "react-native";
+import { Dimensions, Keyboard } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -20,17 +21,7 @@ const Container = styled.View`
     align-items:center;
     justify-content: flex-start;
     background-color: white;
-`;
-const InputsContainer = styled.View`
-    width: ${WIDTH / 1.2}px;
-    height: ${HEIGHT/ 2}px;
-    border-radius: 14px;
-    margin-top: 60px;
-    background-color: #94B5C0;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0px 0px 4px #94B5C0;
-`;
+`
 const TextContainer = styled.View`
     flex-direction: column;
     justify-content: center;
@@ -38,17 +29,27 @@ const TextContainer = styled.View`
     background-color: #FED048;
     border-radius: 7;
     paddingVertical: 10;
-    paddingHorizontal: 20;
-    position: absolute;
+    paddingHorizontal: 80;
     top: 20px;
     box-shadow: 0px 2px 2px #FED048;
 `;
-
+const InputsContainer = styled.View`
+    width: ${WIDTH}px;
+    height: ${HEIGHT}px;
+    background-color: #94B5C0;
+    align-items: center;
+    box-shadow: 0px 0px 4px #94B5C0;
+`;
+const InputContainer = styled.View`
+    width: ${WIDTH / 1.5}px;
+    height: ${HEIGHT / 3.5}px;
+    justify-content: space-around;
+`;
 const Text = styled.Text`
     font-size: 25px;
     color: black;
     font-weight: 700;
-`
+`;
 const LOGIN_MUTATION = gql`
     mutation loginMutation($loginInput: LoginIntput!) {
         login(input: $loginInput) {
@@ -57,9 +58,9 @@ const LOGIN_MUTATION = gql`
             token
         }
     }
-`
+`;
 
-export default () => {
+const Login =  () => {
     const {setValue, errors, register, handleSubmit, getValues} = useForm({
         mode: 'onChange'
     });
@@ -105,25 +106,28 @@ export default () => {
         register('password');
     }, [register]);
     return (
-        <Container>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <Container>
             <InputsContainer>
                 <TextContainer>
-                    <Text>Login</Text>
+                    <Text>FooDiary</Text>
                 </TextContainer>
-                <Input
-                        placeholder={"Email"}
-                        onChange={(text: string) => {
-                            setValue('email', text);
-                        }}
-                />
-                <Password
-                        placeholder={"Password"}
-                        onChange={(text: string) => {
-                            setValue('password', text);
-                        }}
-                />
+                <InputContainer>
+                    <Input
+                            placeholder={"Email"}
+                            onChange={(text: string) => {
+                                setValue('email', text);
+                            }}
+                    />
+                    <Password
+                            placeholder={"Password"}
+                            onChange={(text: string) => {
+                                setValue('password', text);
+                            }}
+                    />
+                </InputContainer>
                 <JoinButton 
-                    title={"Log in!"}
+                    title={"Log In"}
                     onPress={handleSubmit(onSubmit)}
                     buttonStyle={{
                         backgroundColor: "#FED048",
@@ -143,5 +147,8 @@ export default () => {
                 />
             </InputsContainer>
         </Container>
+    </TouchableWithoutFeedback>
     )
-}
+};
+
+export default Login;

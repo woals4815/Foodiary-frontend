@@ -9,13 +9,12 @@ const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 const Container = styled.View`
     width: 100%;
     height: 100%;
-    padding-right: 10px;
 `
 
 const Image = styled.Image`
     width: 100%;
     height: 100%;
-    border-radius: 20px;
+    border-radius: 5px;
 `;
 
 const ImagePresenter = ({imageUri}: any) => {

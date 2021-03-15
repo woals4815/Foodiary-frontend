@@ -40,11 +40,11 @@ const Container = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background-color: #94B5C0;
     height: 100%;
 `;
 
-export default (props: any) => {
+const MyDiary =  (props: any) => {
     const { navigation, route } = props;
     let { data, loading, error, refetch} = useQuery<getMyDiaries>(GET_MY_DIARIES_QUERY);
     useEffect(() => {
@@ -77,3 +77,5 @@ export default (props: any) => {
         )
     }
 }
+
+export default MyDiary;

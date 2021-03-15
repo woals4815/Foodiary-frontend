@@ -7,8 +7,8 @@ import Home from "../screens/Home/Home";
 import Login from "../screens/Login";
 import Join from "../screens/Join";
 import AddDiary from "../screens/AddDiary/AddDiary";
-import EditProfile from "../screens/EditProfile/EditProfile";
 import { Dimensions } from "react-native";
+import Profile from "../screens/EditProfile/Profile";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -18,12 +18,10 @@ const tabBarStyles = {
     labelStyle: {
         color: "black"
     },
-    style: {
-        width: WIDTH,
-        height: "9%"
-    },
-    activeBackgroundColor: "skyblue",
-    inactiveBackgroundColor: "#F9F3F3"
+    activeBackgroundColor: "#FED048",
+    inactiveBackgroundColor: "#F9F3F3",
+    inactiveTintColor: "gray",
+    activeTintColor: "black"
 }
 
 export const getHeaderName = (route: any) => {
@@ -45,7 +43,7 @@ export default (props: any) => {
         >
             <Tabs.Screen name="Home" component={Home}/>
             <Tabs.Screen name="AddDiary" component={AddDiary} />
-            <Tabs.Screen name="EditProfile" component={EditProfile} />
+            <Tabs.Screen name="Profile" component={Profile} />
         </Tabs.Navigator>
     ): (
     <Tabs.Navigator
