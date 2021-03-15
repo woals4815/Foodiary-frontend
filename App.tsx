@@ -19,7 +19,7 @@ const Text = styled.Text`
   margin-left: 100px;
   margin-top: 100px
 `
-function cacheImages(images) {
+const cacheImages = (images) => {
   return images.map(image => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
@@ -28,7 +28,7 @@ function cacheImages(images) {
     }
   });
 }
-function cacheFonts(fonts) {
+const cacheFonts = (fonts) => {
   return fonts.map(font => Font.loadAsync(font));
 }
 export default function App() {
@@ -40,7 +40,6 @@ export default function App() {
     ]);
     const fonts = cacheFonts([Ionicons.font, FontAwesome.font]);
     await Promise.all([...images, ...fonts]);
-
   };
   const onFinish = () => setIsReady(true);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
