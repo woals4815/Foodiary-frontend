@@ -19,25 +19,25 @@ const Text = styled.Text`
   margin-left: 100px;
   margin-top: 100px
 `
-const cacheImages = (images: any) =>
-  images?.map((image: any) => {
+export const cacheImages = async(images: any) =>
+  images?.map( async(image: any) => {
     if (typeof image === "string") {
-      return Image.prefetch(image);
+      return await Image.prefetch(image);
     } else {
-      return Asset.fromModule(image).downloadAsync();
+      return await Asset.fromModule(image).downloadAsync();
     }
   });
-const cacheFonts = (fonts: any) =>
-  fonts?.map((font: any) => [Font.loadAsync(font), Font.loadAsync(font)]);
+const cacheFonts = async(fonts: any) =>
+  fonts?.map(async(font: any) => await [Font.loadAsync(font), Font.loadAsync(font)]);
 export default function App() {
   const [isReady, setIsReady] = useState(false);
-  const loadAssets = () => {
-    const images = cacheImages([
+  const loadAssets = async() => {
+    const images = await cacheImages([
       "https://images.unsplash.com/photo-1572177191856-3cde618dee1f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=582&q=80",
       require("./assets/splash.png"),
     ]);
-    const fonts = cacheFonts([Ionicons.font, FontAwesome.font]);
-    return Promise.all([...images, ...fonts]);
+    const fonts = await cacheFonts([Ionicons.font, FontAwesome.font]);
+    return await Promise.all([...images, ...fonts]);
   };
   const onFinish = () => setIsReady(true);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -51,7 +51,7 @@ export default function App() {
     </>
   ): (
     <AppLoading
-      startAsync={cacheImages}
+      startAsync={loadAssets}
       onFinish={onFinish}
       onError={console.error}
     />

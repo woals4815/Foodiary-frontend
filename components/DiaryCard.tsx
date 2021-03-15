@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
 import styled from "styled-components/native";
+import { cacheImages } from "../App";
 import { formatDate } from "../utils";
 import ImagePresenter from "./ImagePresenter";
 
@@ -120,12 +121,18 @@ const Text= styled.Text`
     font-size: 14px;
     font-weight: 500;
 `;
-const DiaryCard = ({images, description, rating, publicOrNot, createdAt}) => {
+const DiaryCard = ({images, description, rating, publicOrNot, createdAt}: any) => {
     return (
         <Container>
             <CardContainer>
                 <ImageContainer>
-                    <Swiper showsButtons={false} loop>
+                    <Swiper 
+                    showsButtons={false} 
+                    loop
+                    paginationStyle={{
+                        bottom: -25
+                    }}
+                    >
                         {images?.map((image: any, index: any): any => (
                             <ImagePresenter imageUri={image} key={index} />
                         ))}

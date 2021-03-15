@@ -36,17 +36,19 @@ const GET_MY_DIARIES_QUERY = gql`
 const Text = styled.Text`
     font-size: 20px;
 `;
-const Container = styled.View``;
-
-const TestImages = ["https://vicion-food.s3.ap-northeast-2.amazonaws.com/1615646617193IMG_0003.JPG", "https://vicion-food.s3.ap-northeast-2.amazonaws.com/1615636257168IMG_0810.HEIC"];
-
+const Container = styled.View`
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    height: 100%;
+`;
 
 export default (props: any) => {
     const { navigation, route } = props;
     let { data, loading, error, refetch} = useQuery<getMyDiaries>(GET_MY_DIARIES_QUERY);
     useEffect(() => {
         refetch();
-        console.log(data);
     }, [data]);
     if (loading){
         return(
@@ -57,24 +59,21 @@ export default (props: any) => {
     }
     if (!loading) {
         return (
-            <ScrollContainer>
-                {data?.getMyDiaries.myDiaries?.map(diary => (
-                    <DiaryCard 
-                        images={diary.images}
-                        description={diary.description}
-                        rating={diary.rating}
-                        publicOrNot={diary.publicOrNot}
-                        createdAt={diary.createdAt}
-                    />
-                ))}
-                {/* <DiaryCard 
-                    images={TestImages} 
-                    description={data?.getMyDiaries.myDiaries[8].description} 
-                    rating={data?.getMyDiaries.myDiaries[8].rating} 
-                    publicOrNot={data?.getMyDiaries.myDiaries[8].publicOrNot}
-                    createdAt={data?.getMyDiaries.myDiaries[8].createdAt}
-                    /> */}
-            </ScrollContainer>
+            <Container>
+                <ScrollContainer
+                >
+                    {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
+                        <DiaryCard 
+                            images={diary.images}
+                            description={diary.description}
+                            rating={diary.rating}
+                            publicOrNot={diary.publicOrNot}
+                            createdAt={diary.createdAt}
+                            key={diary.id}
+                        />
+                    ))}
+                </ScrollContainer>
+            </Container>
         )
     }
 }

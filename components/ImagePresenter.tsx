@@ -1,6 +1,6 @@
+import { Asset } from "expo-asset";
 import React, { useEffect } from "react";
 import { Dimensions } from "react-native";
-import Swiper from "react-native-web-swiper";
 import styled from "styled-components/native";
 import ScrollContainer from "./ScrollContainer";
 
@@ -15,13 +15,17 @@ const Container = styled.View`
 const Image = styled.Image`
     width: 100%;
     height: 100%;
-    border-radius: 7px;
+    border-radius: 20px;
 `;
 
 const ImagePresenter = ({imageUri}: any) => {
+
     return (
             <Container>
-                <Image source={{uri: imageUri}} />
+                <Image 
+                source={{uri: imageUri}} 
+                resizeMethod="resize"
+                />
             </Container>
     )
 }

@@ -3,19 +3,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
 const Button = styled.View`
-    padding: 7px 10px;
-    background-color: blue;
-    border-radius: 3px;
 `
 const ButtonText = styled.Text`
-  color: white;
+  color: black;
 `;
 
 
-const JoinButton = ({title, onPress}: any) => (
+const JoinButton = ({title, onPress, buttonStyle, textStyle}: any) => (
     <TouchableOpacity onPress={onPress}>
-        <Button>
-            <ButtonText>{title}</ButtonText>
+        <Button style={{...buttonStyle}}>
+            <ButtonText style={{...textStyle}}>{title}</ButtonText>
         </Button>
     </TouchableOpacity>
 )

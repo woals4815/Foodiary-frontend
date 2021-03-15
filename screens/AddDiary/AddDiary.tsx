@@ -19,9 +19,19 @@ const Container = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: white;
     height: 100%;
-    width: 100%;
 `;
+const InputsContainer = styled.View`
+    width: ${WIDTH / 1.2}px;
+    height: ${HEIGHT/ 2}px;
+    border-radius: 14px;
+    margin-top: 60px;
+    background-color: #94B5C0;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 4px #94B5C0;
+`
 const ImageContainer = styled.View`
     width: ${WIDTH/ 1.5}px;
     height: ${HEIGHT / 4}px;
@@ -37,7 +47,6 @@ const ButtonContainer = styled.View`
 const ButtonText=styled.Text`
     font-size: 20px;
 `;
-const Hello = styled.View``;
 
 const CREATE_DIARY_MUTATION = gql`
     mutation createDiaryMutation($createDiaryMutationInput: CreateDiaryInput!){
@@ -149,7 +158,7 @@ export default (props: any) => {
         register('rating');
     }, [params?.selectImages, images, register]);
     return (
-        <>
+        <Container>
             <ScrollContainer>
                 {images.length > 0 && (
                     <>
@@ -211,6 +220,6 @@ export default (props: any) => {
                     <Text>Go to My Diary</Text>
                 </TouchableOpacity>
             </ScrollContainer>
-        </>
+        </Container>
     )
 }

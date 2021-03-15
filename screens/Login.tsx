@@ -9,16 +9,45 @@ import Password from "../components/Password";
 import AsyncStorage from "@react-native-community/async-storage";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { authTokenVar, isLoggedInVar } from "../apollo";
+import { Dimensions } from "react-native";
+
+const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
-    height: 100%;
-    width: 100%;
+    flex-direction: column;
+    height: ${HEIGHT}px;
+    width:${WIDTH}px;
+    align-items:center;
+    justify-content: flex-start;
     background-color: white;
-`
+`;
+const InputsContainer = styled.View`
+    width: ${WIDTH / 1.2}px;
+    height: ${HEIGHT/ 2}px;
+    border-radius: 14px;
+    margin-top: 60px;
+    background-color: #94B5C0;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 4px #94B5C0;
+`;
+const TextContainer = styled.View`
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #FED048;
+    border-radius: 7;
+    paddingVertical: 10;
+    paddingHorizontal: 20;
+    position: absolute;
+    top: 20px;
+    box-shadow: 0px 2px 2px #FED048;
+`;
 
 const Text = styled.Text`
-    color: red;
-    font-size: 30px;
+    font-size: 25px;
+    color: black;
+    font-weight: 700;
 `
 const LOGIN_MUTATION = gql`
     mutation loginMutation($loginInput: LoginIntput!) {
@@ -77,23 +106,42 @@ export default () => {
     }, [register]);
     return (
         <Container>
-            <Text>Login Screen</Text>
-            <Input
-                    placeholder={"Email"}
-                    onChange={(text: string) => {
-                        setValue('email', text);
-                    }}
-            />
-            <Password
-                    placeholder={"Password"}
-                    onChange={(text: string) => {
-                        setValue('password', text);
-                    }}
-            />
-            <JoinButton 
+            <InputsContainer>
+                <TextContainer>
+                    <Text>Login</Text>
+                </TextContainer>
+                <Input
+                        placeholder={"Email"}
+                        onChange={(text: string) => {
+                            setValue('email', text);
+                        }}
+                />
+                <Password
+                        placeholder={"Password"}
+                        onChange={(text: string) => {
+                            setValue('password', text);
+                        }}
+                />
+                <JoinButton 
                     title={"Log in!"}
                     onPress={handleSubmit(onSubmit)}
+                    buttonStyle={{
+                        backgroundColor: "#FED048",
+                        paddingHorizontal: 30,
+                        paddingVertical: 15,
+                        borderRadius: "8%",
+                        shadowColor: "#FED048",
+                        shadowOffset: {
+                            width: 0,
+                            height: 2
+                        },
+                        shadowOpacity: 0.7
+                    }}
+                    textStyle={{
+                        fontWeight: "700"
+                    }}
                 />
+            </InputsContainer>
         </Container>
     )
 }

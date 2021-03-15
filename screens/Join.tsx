@@ -7,7 +7,7 @@ import Input from "../components/Input";
 import Password from "../components/Password";
 import {useMutation} from "@apollo/client/react/hooks";
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
-import { Alert } from "react-native";
+import { Alert, Dimensions } from "react-native";
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -26,28 +26,42 @@ interface ICreateAccountFrom {
     name: string;
     profilePic?: string;
 }
+const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
     flex-direction: column;
-    height: 100%;
-    width:100%;
+    height: ${HEIGHT}px;
+    width:${WIDTH}px;
     align-items:center;
-    padding-top: 100px;
+    justify-content: flex-start;
     background-color: white;
 `
 const TextContainer = styled.View`
-    width: 50%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 8%;
-    margin-bottom: 20px;
-    border-radius: 20px
+    background-color: #FED048;
+    border-radius: 7;
+    paddingVertical: 10;
+    paddingHorizontal: 20;
+    position: absolute;
+    top: 20px;
+    box-shadow: 0px 2px 2px #FED048;
+`;
+const InputsContainer = styled.View`
+    width: ${WIDTH / 1.2}px;
+    height: ${HEIGHT/ 2}px;
+    border-radius: 14px;
+    margin-top: 60px;
+    background-color: #94B5C0;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 4px #94B5C0;
 `
 const Text = styled.Text`
-    font-size: 36px;
+    font-size: 25px;
     color: black;
-    font-weight: 500;
+    font-weight: 700;
 `
 
 export default ({navigation, route}: any) => {
@@ -113,37 +127,54 @@ export default ({navigation, route}: any) => {
     return (
         <>
             <Container>
-                <TextContainer>
-                    <Text>Let's join!</Text>
-                </TextContainer>
-                <Input 
-                    placeholder={"Email"}
-                    onChange={(text: string) => {
-                        setValue('email', text);
-                    }}
-                />
-                <Input 
-                    placeholder={"Name"}
-                    onChange={(text: string) => {
-                        setValue('name', text);
-                    }}
-                />
-                <Password 
-                    placeholder={"Password"}
-                    onChange={(text: string) => {
-                        setValue('password', text);
-                    }}
-                />
-                <Password 
-                    placeholder={"Password for confirm"}
-                    onChange={(text: string) => {
-                        setValue('confirmPassword', text);
-                    }}
-                />
-                <JoinButton 
-                    title={"Join!"}
-                    onPress={handleSubmit(onSubmit)}
-                />
+                <InputsContainer>
+                    <TextContainer>
+                        <Text>Let's join!</Text>
+                    </TextContainer>
+                    <Input 
+                        placeholder={"Email"}
+                        onChange={(text: string) => {
+                            setValue('email', text);
+                        }}
+                    />
+                    <Input 
+                        placeholder={"Name"}
+                        onChange={(text: string) => {
+                            setValue('name', text);
+                        }}
+                    />
+                    <Password 
+                        placeholder={"Password"}
+                        onChange={(text: string) => {
+                            setValue('password', text);
+                        }}
+                    />
+                    <Password 
+                        placeholder={"Password for confirm"}
+                        onChange={(text: string) => {
+                            setValue('confirmPassword', text);
+                        }}
+                    />
+                    <JoinButton 
+                        title={"Join!"}
+                        onPress={handleSubmit(onSubmit)}
+                        buttonStyle={{
+                            backgroundColor: "#FED048",
+                            paddingHorizontal: 30,
+                            paddingVertical: 15,
+                            borderRadius: "8px",
+                            shadowColor: "#FED048",
+                            shadowOffset: {
+                                width: 0,
+                                height: 2
+                            },
+                            shadowOpacity: 0.7
+                        }}
+                        textStyle={{
+                            fontWeight: "700"
+                        }}
+                    />
+                </InputsContainer>
             </Container>
         </>
     )

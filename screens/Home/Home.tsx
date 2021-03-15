@@ -51,15 +51,9 @@ export const GET_ALL_DIARIES = gql`
 export default () => {
   const {data, error, loading} = useQuery<getAllDiaries>(GET_ALL_DIARIES);
   return (
-      <ScrollContainer>
-        {data?.getAllDiaries.diaries?.map(diary => (
-            <>
-                <Text>{diary.description}</Text>
-                <Text>{diary.id}</Text>
-                <Text>{diary.creator.name}</Text>
-                <Text>{diary.createdAt}</Text>
-            </>
-        ))}
-      </ScrollContainer>
+      <Container>
+        <ScrollContainer>
+        </ScrollContainer>
+      </Container>
   );
 }
