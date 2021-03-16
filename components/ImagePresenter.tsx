@@ -14,18 +14,18 @@ const Container = styled.View`
 const Image = styled.Image`
     width: 100%;
     height: 100%;
-    border-radius: 5px;
 `;
 
-const ImagePresenter = ({imageUri}: any) => {
+const ImagePresenter = ({imageUri, imageStyle}: any) => {
 
     return (
-            <Container>
-                <Image 
-                source={{uri: imageUri}} 
-                resizeMethod="resize"
-                />
-            </Container>
+            <Image 
+            source={{uri: imageUri}} 
+            resizeMethod="resize"
+            style={{
+                ...imageStyle
+            }}
+            />
     )
 }
 

@@ -39,38 +39,38 @@ const DescriptionContainer = styled.View`
     height: ${HEIGHT/4}px;
     width: 100%;
     justify-content: center;
-`
+`;
 const PublicContainer = styled.View`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-`
+`;
 
 const PublicTextContaier = styled.View`
     paddingVertical: 7px;
     paddingHorizontal: 10px;
     background-color: gray;
     border-radius: 50;
-`
+`;
 const PublicText = styled.Text`
     font-size: 12px;
     color: #FED048;
     font-weight: 700;
-`
+`;
 
 const RangeContainer = styled.View`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-`
+`;
 const RangeTextContainer = styled.View`
     paddingVertical: 7px;
     paddingHorizontal: 10px;
     background-color: gray;
     border-radius: 50;
-`
+`;
 
 const Text = styled.Text`
     font-size: 12px;
@@ -163,7 +163,6 @@ const AddDiary =  (props: any) => {
         setUploadImages([]);
         setUploadImages(data);
         const {description, rating} = getValues();
-        console.log(loading);
         if (!loading) {
             try {
                 await createDiaryMutation({
@@ -213,7 +212,13 @@ const AddDiary =  (props: any) => {
                               }}
                             >
                                 {images?.map((image: any, index: any) => (
-                                    <ImagePresenter imageUri={image.uri} key={image.id} />
+                                    <ImagePresenter 
+                                        imageUri={image.uri} 
+                                        key={image.id}  
+                                        imageStyle={{
+                                            height: HEIGHT / 2
+                                        }}
+                                    />
                                 ))}
                             </Swiper>
                     </>

@@ -10,6 +10,8 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from "@react-navigation/native";
 import Stack from './navigation/Stack';
+import { registerRootComponent } from 'expo';
+import Drawer from './navigation/Drawer';
 
 
 
@@ -19,8 +21,8 @@ const Text = styled.Text`
   margin-left: 100px;
   margin-top: 100px
 `
-const cacheImages = (images) => {
-  return images.map(image => {
+const cacheImages = (images:any) => {
+  return images.map((image:any) => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
     } else {
@@ -28,18 +30,19 @@ const cacheImages = (images) => {
     }
   });
 }
-const cacheFonts = (fonts) => {
-  return fonts.map(font => Font.loadAsync(font));
+const cacheFonts = (fonts: any) => {
+  return fonts.map((font) => [Font.loadAsync(font), Font.loadAsync(font)]);
 }
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const loadAssets = async() => {
-    const images = await cacheImages([
+    const images = cacheImages([
       "https://images.unsplash.com/photo-1572177191856-3cde618dee1f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=582&q=80",
       require("./assets/splash.png"),
     ]);
     const fonts = cacheFonts([Ionicons.font, FontAwesome.font]);
     await Promise.all([...images, ...fonts]);
+    return;
   };
   const onFinish = () => setIsReady(true);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -55,7 +58,9 @@ export default function App() {
     <AppLoading
       startAsync={loadAssets}
       onFinish={onFinish}
-      onError={console.error}
+      onError={console.warn}
     />
   );
 }
+
+registerRootComponent(App);

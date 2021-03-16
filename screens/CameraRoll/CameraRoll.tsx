@@ -41,7 +41,7 @@ const ButtonText= styled.Text`
 const CameraRoll = ({navigation, route}: any) => {
     const [selectImages, setSelectImages] = useState<any>([]);
     const { 
-        params: { images }
+        params: { images, paramsName }
     } = route;
     useLayoutEffect(() => {
         const title = "Camera Roll";
@@ -67,9 +67,12 @@ const CameraRoll = ({navigation, route}: any) => {
         setSelectImages([]);
     }
     const passSelectedImages = () => {
-        navigation.navigate("AddDiary", {selectImages});
+        if (paramsName === "Profile") {
+            navigation.navigate("Profile", {selectImages});
+        }else{
+            navigation.navigate("AddDiary" , {selectImages});
+        }
     }
-    console.log(selectImages);
     return (
     <>
         <ScrollContainer>

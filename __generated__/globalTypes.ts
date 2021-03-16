@@ -22,6 +22,14 @@ export interface CreateDiaryInput {
   rating?: number | null;
 }
 
+export interface EditProfileInput {
+  confirmPassword?: string | null;
+  email?: string | null;
+  name?: string | null;
+  password?: string | null;
+  profilePic?: string | null;
+}
+
 export interface LoginIntput {
   email: string;
   password: string;

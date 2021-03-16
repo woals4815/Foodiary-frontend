@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Tabs from "./Tabs";
 import CameraRoll from "../screens/CameraRoll/CameraRoll";
 import MyDiary from "../screens/MyDiary/MyDiary";
+import Drawer from "./Drawer";
 
 const Stack = createStackNavigator();
 

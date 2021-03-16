@@ -7,7 +7,7 @@ import ScrollContainer from "../../components/ScrollContainer";
 import { getMyDiaries } from "../../__generated__/getMyDiaries";
 
 
-const GET_MY_DIARIES_QUERY = gql`
+export const GET_MY_DIARIES_QUERY = gql`
     query getMyDiaries {
         getMyDiaries {
             error
