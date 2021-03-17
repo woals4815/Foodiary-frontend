@@ -13,7 +13,7 @@ const View = styled.View`
     width: 100%;
 `; 
 
-const Input = ({placeholder, onChange, inputStyle, multiline}: any) => {
+const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue}: any) => {
    const [isFocused, setIsFocused] = useState(false);
    return( 
         <TouchableWithoutFeedback
@@ -31,6 +31,7 @@ const Input = ({placeholder, onChange, inputStyle, multiline}: any) => {
                 onBlur={() => {
                     setIsFocused(false);
                 }}
+                defaultValue={defaultValue}
                 />
             </View>
         </TouchableWithoutFeedback>

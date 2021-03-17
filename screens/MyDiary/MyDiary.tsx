@@ -50,32 +50,26 @@ const MyDiary =  (props: any) => {
     useEffect(() => {
         refetch();
     }, [data]);
-    if (loading){
-        return(
-            <Container>
-                <Text>Loading</Text>
-            </Container>
-        )
-    }
-    if (!loading) {
-        return (
-            <Container>
-                <ScrollContainer
-                >
-                    {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
-                        <DiaryCard 
-                            images={diary.images}
-                            description={diary.description}
-                            rating={diary.rating}
-                            publicOrNot={diary.publicOrNot}
-                            createdAt={diary.createdAt}
-                            key={diary.id}
-                        />
-                    ))}
-                </ScrollContainer>
-            </Container>
-        )
-    }
+    console.log(data);
+    return (
+        <Container>
+            <ScrollContainer
+                loading={loading}
+                refreshFn={refetch}
+            >
+                {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
+                    <DiaryCard 
+                        images={diary.images}
+                        description={diary.description}
+                        rating={diary.rating}
+                        publicOrNot={diary.publicOrNot}
+                        createdAt={diary.createdAt}
+                        key={diary.id}
+                    />
+                ))}
+            </ScrollContainer>
+        </Container>
+    )
 }
 
 export default MyDiary;

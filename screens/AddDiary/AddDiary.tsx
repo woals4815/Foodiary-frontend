@@ -200,7 +200,9 @@ const AddDiary =  (props: any) => {
         <TouchableWithoutFeedback
             onPress={() => Keyboard.dismiss()}
         >
-            <ScrollContainer>
+            <ScrollContainer
+                loading={loading}
+            >
                 <InputsContainer>
                 <ImageContainer>
                 {images.length > 0 && (

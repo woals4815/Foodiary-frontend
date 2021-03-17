@@ -31,7 +31,7 @@ const cacheImages = (images:any) => {
   });
 }
 const cacheFonts = (fonts: any) => {
-  return fonts.map((font) => [Font.loadAsync(font), Font.loadAsync(font)]);
+  return fonts.map((font: any) => [Font.loadAsync(font), Font.loadAsync(font)]);
 }
 export default function App() {
   const [isReady, setIsReady] = useState(false);

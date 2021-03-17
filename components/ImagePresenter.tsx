@@ -20,8 +20,8 @@ const ImagePresenter = ({imageUri, imageStyle}: any) => {
 
     return (
             <Image 
-            source={{uri: imageUri}} 
-            resizeMethod="resize"
+            source={{uri: imageUri}}
+            resizeMethod="resize" 
             style={{
                 ...imageStyle
             }}

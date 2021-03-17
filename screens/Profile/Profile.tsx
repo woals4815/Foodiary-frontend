@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client";
-import {useApolloClient, useMutation, useQuery} from "@apollo/client/react/hooks";
+import { gql, useApolloClient } from "@apollo/client";
+import { useMutation, useQuery} from "@apollo/client/react/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,11 +58,12 @@ const ProfileImageContainer = styled.View`
     width: ${WIDTH / 3}px;
     border-radius: ${WIDTH / 3}px;
     box-shadow: 0px 2px 2px gray;
-`
-const EditButtonContainer = styled.View`
+    align-items: center;
+    justify-content: center;
+    background-color: black;
 `
 const ContentContainer = styled.View`
-    height: ${HEIGHT/2}px;
+    height: ${HEIGHT/2.2}px;
     width: 100%;
     border-radius: 8px;
     flex-direction: column;
@@ -72,7 +73,7 @@ const ContentContainer = styled.View`
 const EmailContainer = styled.View`
     flex-direction: row;
     width: 100%;
-    paddingHorizontal: 40px;
+    paddingHorizontal: 70px;
     flex: 2;
     justify-content: center;
     align-items: center;
@@ -84,7 +85,7 @@ const NameContainer = styled.View`
     flex-direction: row;
     flex: 2;
     justify-content: center;
-    paddingHorizontal: 40px;
+    paddingHorizontal: 70px;
     align-items: center;
     width: 100%;
 `;
@@ -111,59 +112,84 @@ const SubmitContaier = styled.View`
     justify-content: center;
     align-items: center;
 `;
-
 const EditBarContaier = styled.View`
-    width: ${WIDTH / 3}px;
+    width: ${WIDTH / 5.4}px;
     z-index: 9;
     position: absolute;
     height: ${WIDTH/15}px;
     bottom: 10px;
-    align-items:center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px
 `
 const EditBarText = styled.Text`
     font-size: 20px;
 `
+
+interface IFormProps {
+    email?: string;
+    name?: string;
+    profilePic?: string;
+};
 const Profile = ({navigation, route: { params } }: any) => {
-    const [isEdit, setIsEdit] =useState(false);
+    const {data: myData, loading, error, refetch} = useQuery<getMe>(GET_ME_QUERY);
+    const [isEdit, setIsEdit] =useState(false);//이건 필수
+    const [profilePic, setProfilePic] = useState(myData?.getMe.profilePic); //이건 캐시 업데이트
+    const [existSelectImage, setExistSelectImage] = useState(params?.selectImages[0]); //이건 카메라롤 갔다 온 파람 저장용, useEffect로 계속 업데이트 시킴.
     const paramsName = "Profile";
-    const {data: myData, loading, error, refetch} = useQuery<getMe>(GET_ME_QUERY, { pollInterval: 200 });
-    const [profilePic, setProfilePic] = useState(myData?.getMe.profilePic);
-    const [existSelectImage, setExistSelectImage] = useState(params?.selectImages[0]);
     const client = useApolloClient();
     const onPressEdit = () => {
         if (isEdit){
-            setProfilePic(myData?.getMe.profilePic);
+            params?.selectImages?.splice(0, params?.selectImages?.length);
             setExistSelectImage(null);
             setIsEdit(false);
         } else {
             setIsEdit(true);
         }
     }
-    const {register, handleSubmit,watch, errors, setValue, getValues} = useForm({
+    const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<IFormProps>({
         mode: "onChange"
     });
+    const clientQuery = client.readQuery({ query: GET_ME_QUERY });
     const onCompleted = (data: editProfile) => {
         const {
             editProfile: {
                 ok, error
-        }} = data;
+            }
+        } = data;
         const { email, name } = getValues();
-        const clientQuery = client.readQuery({ query: GET_ME_QUERY });
+        console.log("onCompleted", profilePic);
         if (ok) {
-            client.writeQuery({
-                query: GET_ME_QUERY,
+            console.log(email, name);
+            client.writeFragment({
+                id: `User:${myData?.getMe.id}`,
+                fragment: gql`
+                  fragment EditedUser on User {
+                    email
+                    name
+                    profilePic
+                  }
+                `,
                 data: {
-                  getMe: {...clientQuery, email, name, profilePic: existSelectImage.uri},
+                  ...clientQuery.getMe,
+                  email,
+                  name,
+                  profilePic: profilePic
                 },
               });
+            console.log(clientQuery.getMe);
             Alert.alert("Edit Success!");
         };
+        if (params?.selectImages.length > 0) {
+            params?.selectImages?.splice(0, params?.selectImages.length);
+        }
         setExistSelectImage(null);
         setIsEdit(false);
     };
     const [editProfile, {data, loading: editLoading, error: editError}] = useMutation<editProfile, editProfileVariables>(EDIT_PROFILE_MUTATION, {
         onCompleted,
     });
+    console.log("mutation error?: ",error)
     const onPressPhotho = async() => {
         const result= await MediaLibrary.getAssetsAsync({first: 300});
         const {assets: images} = result;
@@ -171,49 +197,52 @@ const Profile = ({navigation, route: { params } }: any) => {
     }
     const onSubmit = async() => {
         const { email, name } = getValues();
-        if (!loading){
-            if (existSelectImage) {
-                const bodyFormData = new FormData();
-                bodyFormData.append('file', { uri: existSelectImage.uri, name: existSelectImage.filename, type: 'image/jpeg'});
-                const { data } = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
-                    method: 'post',
-                    data: bodyFormData,
-                    headers: {
-                        'content-type': 'multipart/form-data',
-                    },
-                });
-                console.log(data);
-                setProfilePic(data[0]);
-                await editProfile({
-                    variables: {
-                        editProfileInput: {
-                            profilePic: data[0]
-                        }
-                    }
-                })
-            }
+        //console.log('onSubmit', existSelectImage); 선택한 이미지 useEffect로 넘어오는건 완전히 잘 작동
+        if (existSelectImage) {
+            const bodyFormData = new FormData();
+            bodyFormData.append('file', { uri: existSelectImage.uri, name: existSelectImage.filename, type: 'image/jpeg'});
+            const { data } = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
+                method: 'post',
+                data: bodyFormData,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                },
+            });//여기까지도 잘 작동
+            setProfilePic(data[0]); //여기도 잘 작동
             await editProfile({
                 variables: {
                     editProfileInput: {
-                        email, name
+                        profilePic: profilePic, email, name
                     }
                 }
             });
         }
+        await editProfile({
+            variables: {
+                editProfileInput: {
+                    email, name
+                }
+            }
+        });
     }
     useEffect(() => {
-        register("email");
+        register("email", { pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/});
         register("name");
-        setExistSelectImage(params?.selectImages[0]);
+        if (params?.selectImages){
+            setExistSelectImage(params?.selectImages[0]); //잘 작동함
+        }
     },[register, params?.selectImages]);
     return(
-        <ScrollContainer>
+        <ScrollContainer
+            loading={loading}
+            refreshFn={refetch}
+        >
             <Container>
                 {isEdit ?
                 <TouchableOpacity onPress={onPressPhotho}>
                     <ProfileImageContainer>
                         <ImagePresenter 
-                            imageUri={existSelectImage? existSelectImage.uri : myData?.getMe.profilePic}
+                            imageUri={existSelectImage ? existSelectImage.uri : myData?.getMe.profilePic}
                             imageStyle={{
                                 borderRadius: WIDTH/3,
                             }}
@@ -266,8 +295,10 @@ const Profile = ({navigation, route: { params } }: any) => {
                                     setValue('email', text);
                                 }}
                                 inputStyle={{
-                                    fontSize: "20px"
+                                    fontSize: 20,
+                                    paddingLeft: 5
                                 }}
+                                defaultValue={myData?.getMe.email}
                             />
                         : <EmailText>{myData?.getMe.email}</EmailText>}
                     </EmailContainer>
@@ -284,8 +315,10 @@ const Profile = ({navigation, route: { params } }: any) => {
                                     setValue('name', text);
                                 }}
                                 inputStyle={{
-                                    fontSize: 20
+                                    fontSize: 20,
+                                    paddingLeft: 5
                                 }}
+                                defaultValue={myData?.getMe.name}
                             />
                         : <NameText>{myData?.getMe.name}</NameText>}
                     </NameContainer>
