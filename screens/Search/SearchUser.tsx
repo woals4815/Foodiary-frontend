@@ -67,7 +67,6 @@ export const SEARCH_USER_QUERY = gql`
 const SearchUser = (props: any) => {
     const { navigation, route } = props;
     const [keyword, setKeyword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [searchUser, {data, loading, error, refetch}] = useLazyQuery<searchUser, searchUserVariables>(SEARCH_USER_QUERY);
     return (
         <InputContainer>
@@ -95,7 +94,9 @@ const SearchUser = (props: any) => {
                 paddingVertical: 10,
                 paddingHorizontal: 20,
             }}
-            refreshFn={refetch}
+            refreshFn={() => {
+                setKeyword("");
+            }}
             loading={loading}
             >
                 {data?.searchUser.users?.length > 0 ? (

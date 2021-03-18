@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {  Alert, Dimensions, Keyboard, Platform, Switch, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import {  Alert, Dimensions, Keyboard, KeyboardAvoidingView, Platform, Switch, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
@@ -198,9 +198,15 @@ const AddDiary =  (props: any) => {
         register('rating');
     }, [params?.selectImages, images, register]);
     return (
-        <TouchableWithoutFeedback
-            onPress={() => Keyboard.dismiss()}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{
+                flex: 1
+            }}
         >
+            <TouchableWithoutFeedback
+            onPress={() => Keyboard.dismiss()}
+            >
             <ScrollContainer
               loading={loading}
               contentContainerStyle={{
@@ -340,7 +346,8 @@ const AddDiary =  (props: any) => {
                     />
                 </InputsContainer>
             </ScrollContainer>    
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
     )
 }
 
