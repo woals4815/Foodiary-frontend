@@ -15,13 +15,14 @@ const Container = styled.View`
     paddingVertical: 20px;
     justify-content: space-between;
     border-radius: 15px;
+    box-shadow: 0px 0px 3px #FED048;
 `;
 const ImageContainer = styled.View`
     width: 100%;
     height: 100%;
     flex: 1;
     background-color: rgba(0,0,0,0.8);
-    box-shadow: 0px 0px 3px black;
+    box-shadow: 0px -1px 3px gray;
 `;
 const ContentContainer = styled.View`
     width: 100%;
@@ -30,6 +31,7 @@ const ContentContainer = styled.View`
     flex-direction: row;
     justify-content: space-between;
     box-shadow: 0px 0px 3px gray;
+    z-index: -1;
 `;
 
 const ContentTitleContainer = styled.View`
@@ -69,19 +71,24 @@ const Text = styled.Text``;
 
 const HomeCard = ({diary}: any) => {
     return (
-      <Container>
+        <Container>
             <ImageContainer>
                 <Swiper
-                    showsButtons={true}
+                    showsButtons={diary.images.length > 1 ? true : false}
                     loop
+                    paginationStyle={{
+                        zIndex: 13,
+                        bottom: -15
+                    }}
                     //버튼 스타일 바꿔야 함 
                 >
-                    <ImagePresenter
-                        imageUri={"https://vicion-food.s3.ap-northeast-2.amazonaws.com/1615634367465IMG_0814.HEIC"}
-                    />
-                    <ImagePresenter
-                        imageUri={"https://vicion-food.s3.ap-northeast-2.amazonaws.com/1615634367465IMG_0814.HEIC"}
-                    />
+                    {diary.images.map((image, index) => (
+                        <ImagePresenter 
+                            imageUri={image}
+                            key={index}
+                            resizeMode={"contain"}
+                        />
+                    ))}
                 </Swiper>
             </ImageContainer>
             <ContentContainer>
@@ -112,6 +119,15 @@ const HomeCard = ({diary}: any) => {
                     }}
                     >Comments</Text>
                   </ContentLabelContainer>
+                  <ContentLabelContainer>
+                      <Text
+                        style={{
+                            fontWeight: "700",
+                            color: "#FED048",
+                            fontSize: 12
+                        }}
+                      >Creator</Text>
+                  </ContentLabelContainer>
               </ContentTitleContainer>
               <ContentDataContainer>
                   <ContentDataContentsContainer
@@ -129,6 +145,13 @@ const HomeCard = ({diary}: any) => {
                   </ContentDataContentsContainer>
                   <ContentDataContentsContainer>
                       <Text>hi</Text>
+                  </ContentDataContentsContainer>
+                  <ContentDataContentsContainer
+                    style={{
+                        justifyContent: "center"
+                    }}
+                  >
+                      <Text>{diary.creator.name}</Text>
                   </ContentDataContentsContainer>
               </ContentDataContainer>
           </ContentContainer>

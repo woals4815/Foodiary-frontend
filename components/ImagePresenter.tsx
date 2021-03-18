@@ -16,12 +16,12 @@ const Image = styled.Image`
     height: 100%;
 `;
 
-const ImagePresenter = ({imageUri, imageStyle}: any) => {
-
+const ImagePresenter = ({imageUri, imageStyle, resizeMode}: any) => {
     return (
             <Image 
             source={{uri: imageUri}}
-            resizeMethod="resize" 
+            resizeMethod="resize"
+            resizeMode={resizeMode}
             style={{
                 ...imageStyle
             }}

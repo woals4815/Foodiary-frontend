@@ -35,6 +35,10 @@ export interface LoginIntput {
   password: string;
 }
 
+export interface SearchUserInput {
+  query: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

@@ -1,5 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import React, { useLayoutEffect } from "react";
 import { isLoggedInVar } from "../apollo";
@@ -10,20 +10,21 @@ import Join from "../screens/Join";
 import AddDiary from "../screens/AddDiary/AddDiary";
 import { Dimensions, Platform } from "react-native";
 import Profile from "../screens/Profile/Profile";
+import SearchUser from "../screens/Search/SearchUser";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
-const Tabs = createBottomTabNavigator();
+const Tabs = createMaterialBottomTabNavigator();
 
 const tabBarStyles = {
-    showLabel: false,
-    labelStyle: {
-        color: "black"
-    },
+    showLabel: true,
+    // labelStyle: {
+    //     color: "black"
+    // },
     activeBackgroundColor: "#FED048",
     inactiveBackgroundColor: "#F9F3F3",
     inactiveTintColor: "gray",
-    activeTintColor: "black"
+    activeTintColor: "black",
 }
 
 export const getHeaderName = (route: any) => {
@@ -35,40 +36,31 @@ export default (props: any) => {
     useLayoutEffect(() => {
         const title = getHeaderName(route);
         navigation.setOptions({
-          title: title,
+          title: title === "Search" ? "Search User": title,
         });
       }, [route]);
     const isLoggedIn = useReactiveVar(isLoggedInVar);
-    return isLoggedIn ?(
+    return isLoggedIn ? (
         <Tabs.Navigator
-            tabBarOptions={{...tabBarStyles}}
-            screenOptions={({route}) => ({
-                tabBarIcon: ({focused}) => {
-                    let iconName = Platform.OS === "ios" ?"ios-" : "md-"
-                    if (route.name === "Home") {
-                        iconName +="home-sharp"
-                    } else if(route.name ==="AddDiary") {
-                        iconName += "add-circle-sharp"
-                    } else if(route.name === "Profile") {
-                        iconName += "person"
-                    }
-                    return(
-                        <Ionicons
-                          name={"mic"}
-                          color={focused ? "white" : "grey"}
-                          size={26}
-                        />
-                    );
-                }
-            })}
+            initialRouteName="Home"
+            activeColor="black"
+            inactiveColor="gray"
+            shifting={true}
+            labeled={true}
+            barStyle={{ backgroundColor: '#E3FBFF' }}
         >
             <Tabs.Screen name="Home" component={Home}/>
-            <Tabs.Screen name="AddDiary" component={AddDiary} />
+            <Tabs.Screen name="Search" component={SearchUser} />
+            <Tabs.Screen name="Add Diary" component={AddDiary} />
             <Tabs.Screen name="Profile" component={Profile} />
         </Tabs.Navigator>
     ): (
     <Tabs.Navigator
-        tabBarOptions={{...tabBarStyles}}
+        initialRouteName="Join"
+        activeColor="black"
+        inactiveColor="gray"
+        barStyle={{ backgroundColor: '#E3FBFF' }}
+        shifting={true}
     >
         <Tabs.Screen name="Join" component={Join} />
         <Tabs.Screen name="Login" component={Login} />

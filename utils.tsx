@@ -8,5 +8,9 @@ export const formatDate = (date) => {
         year: "numeric",
     });
 };
-export const trimText = (text = "", limit: number) =>
-  text.length > limit ? `${text.slice(0, limit)}` : text;
+export const trimText = (text = "", limit: number) => {
+  if (!text){
+      return;
+  }
+  return text.length > limit ? `${text.slice(0, limit)}` : text;
+}

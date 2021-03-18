@@ -12,6 +12,7 @@ import axios from "axios";
 import Slider from '@react-native-community/slider';
 import ScrollContainer from "../../components/ScrollContainer";
 import Swiper from "react-native-swiper";
+import SearchInput from "../../components/SearchInput";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -51,7 +52,7 @@ const PublicTextContaier = styled.View`
     paddingVertical: 7px;
     paddingHorizontal: 10px;
     background-color: gray;
-    border-radius: 50;
+    border-radius: 50px;
 `;
 const PublicText = styled.Text`
     font-size: 12px;
@@ -69,7 +70,7 @@ const RangeTextContainer = styled.View`
     paddingVertical: 7px;
     paddingHorizontal: 10px;
     background-color: gray;
-    border-radius: 50;
+    border-radius: 50px;
 `;
 
 const Text = styled.Text`
@@ -201,35 +202,126 @@ const AddDiary =  (props: any) => {
             onPress={() => Keyboard.dismiss()}
         >
             <ScrollContainer
-                loading={loading}
+              loading={loading}
+              contentContainerStyle={{
+                  height: HEIGHT,
+                  width: WIDTH
+              }}
             >
                 <InputsContainer>
-                <ImageContainer>
-                {images.length > 0 && (
-                    <>
-                            <Swiper 
-                              showsButtons={false} 
-                              paginationStyle={{
-                                bottom: -25
-                              }}
-                            >
-                                {images?.map((image: any, index: any) => (
-                                    <ImagePresenter 
-                                        imageUri={image.uri} 
-                                        key={image.id}  
-                                        imageStyle={{
-                                            height: HEIGHT / 2
-                                        }}
-                                    />
-                                ))}
-                            </Swiper>
-                    </>
-                )}
-                </ImageContainer>
-                <ButtonContainer>
+                    <ImageContainer>
+                    {images.length > 0 && (
+                        <>
+                                <Swiper 
+                                showsButtons={false} 
+                                paginationStyle={{
+                                    bottom: -25
+                                }}
+                                >
+                                    {images?.map((image: any, index: any) => (
+                                        <ImagePresenter 
+                                            imageUri={image.uri} 
+                                            key={image.id}  
+                                            imageStyle={{
+                                                height: HEIGHT / 2
+                                            }}
+                                        />
+                                    ))}
+                                </Swiper>
+                        </>
+                    )}
+                    </ImageContainer>
+                    <ButtonContainer>
+                        <JoinButton 
+                            title={"Add pictures"}
+                            onPress={onPress}
+                            buttonStyle={{
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                backgroundColor: "#FED048",
+                                borderRadius: "8px",
+                                shadowColor: "#FED048",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1
+                                    },
+                                shadowOpacity: 0.7,
+                                marginBottom: "5%"
+                            }}
+                            textStyle={{
+                                fontWeight: "300"
+                            }}
+                        />
+                        {images.length > 0 && (
+                            <JoinButton 
+                            title={"Delete all"}
+                            onPress={deleteAllImage}
+                            buttonStyle={{
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                backgroundColor: "#FED048",
+                                borderRadius: "8px",
+                                shadowColor: "#FED048",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1
+                                    },
+                                shadowOpacity: 0.7
+                            }}
+                            textStyle={{
+                                fontWeight: "300"
+                            }}
+                        />
+                    )}
+                    </ButtonContainer>
+                    <DescriptionContainer>
+                        <Input 
+                            placeholder={"Write Description"} 
+                            onChange={(text:string) => setValue('description', text)} 
+                            inputStyle={{
+                                height: "70%",
+                                flexShrink: 1,
+                                fontSize: 13
+                            }}
+                            multiline={true}
+                        />
+                    </DescriptionContainer>
+                    <RangeContainer>
+                        <RangeTextContainer>
+                            <Text>Rating: {rangeValue}</Text>
+                        </RangeTextContainer>
+                        <Slider
+                            style={
+                                {width: 200, height: 40, alignSelf: "flex-start" }
+                            }
+                            minimumValue={0}
+                            maximumValue={5}
+                            minimumTrackTintColor="#FED048"
+                            maximumTrackTintColor="#000000"
+                            onValueChange={(value) => {
+                                setRangeValue(value);
+                                setValue('rating',value);
+                            }}
+                            step={1}
+                            value={rangeValue}
+                        />
+                    </RangeContainer>
+                    <PublicContainer>
+                        <PublicTextContaier>
+                            <PublicText>Public ? </PublicText>
+                        </PublicTextContaier>
+                        <Switch 
+                            trackColor={{ false: "#767577", true: "#81b0ff" }}
+                            thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                            ref={register}
+                        />
+                    </PublicContainer>
                     <JoinButton 
-                        title={"Add pictures"}
-                        onPress={onPress}
+                        title={"Create Diary!"}
+                        onPress={handleSubmit(onSubmit)}
                         buttonStyle={{
                             paddingVertical: 10,
                             paddingHorizontal: 10,
@@ -241,99 +333,12 @@ const AddDiary =  (props: any) => {
                                     height: 1
                                 },
                             shadowOpacity: 0.7,
-                            marginBottom: "5%"
                         }}
                         textStyle={{
                             fontWeight: "300"
                         }}
                     />
-                    {images.length > 0 && (
-                        <JoinButton 
-                        title={"Delete all"}
-                        onPress={deleteAllImage}
-                        buttonStyle={{
-                            paddingVertical: 10,
-                            paddingHorizontal: 10,
-                            backgroundColor: "#FED048",
-                            borderRadius: "8px",
-                            shadowColor: "#FED048",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 1
-                                },
-                            shadowOpacity: 0.7
-                        }}
-                        textStyle={{
-                            fontWeight: "300"
-                        }}
-                    />
-                )}
-                </ButtonContainer>
-                <RangeContainer>
-                    <RangeTextContainer>
-                        <Text>Rating: {rangeValue}</Text>
-                    </RangeTextContainer>
-                    <Slider
-                        style={
-                            {width: 200, height: 40, alignSelf: "flex-start" }
-                        }
-                        minimumValue={0}
-                        maximumValue={5}
-                        minimumTrackTintColor="#FED048"
-                        maximumTrackTintColor="#000000"
-                        onValueChange={(value) => {
-                            setRangeValue(value);
-                            setValue('rating',value);
-                        }}
-                        step={1}
-                        value={rangeValue}
-                    />
-                </RangeContainer>
-                <PublicContainer>
-                    <PublicTextContaier>
-                        <PublicText>Public ? </PublicText>
-                    </PublicTextContaier>
-                    <Switch 
-                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
-                        ref={register}
-                    />
-                </PublicContainer>
-                <DescriptionContainer>
-                    <Input 
-                        placeholder={"Write Description"} 
-                        onChange={(text:string) => setValue('description', text)} 
-                        inputStyle={{
-                            height: "70%",
-                            flexShrink: 1,
-                            fontSize: 13
-                        }}
-                        multiline={true}
-                    />
-                </DescriptionContainer>
-                <JoinButton 
-                    title={"Create Diary!"}
-                    onPress={handleSubmit(onSubmit)}
-                    buttonStyle={{
-                        paddingVertical: 10,
-                        paddingHorizontal: 10,
-                        backgroundColor: "#FED048",
-                        borderRadius: "8px",
-                        shadowColor: "#FED048",
-                            shadowOffset: {
-                                width: 0,
-                                height: 1
-                            },
-                        shadowOpacity: 0.7,
-                    }}
-                    textStyle={{
-                        fontWeight: "300"
-                    }}
-                />
-            </InputsContainer>
+                </InputsContainer>
             </ScrollContainer>    
     </TouchableWithoutFeedback>
     )

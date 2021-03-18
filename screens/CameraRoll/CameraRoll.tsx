@@ -70,7 +70,7 @@ const CameraRoll = ({navigation, route}: any) => {
         if (paramsName === "Profile") {
             navigation.navigate("Profile", {selectImages});
         }else{
-            navigation.navigate("AddDiary" , {selectImages});
+            navigation.navigate("Add Diary" , {selectImages});
         }
     }
     return (
