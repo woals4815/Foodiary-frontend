@@ -1,6 +1,6 @@
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
-export const formatDate = (date) => {
+export const formatDate = (date: any) => {
     const theDate = new Date(date);
     return theDate.toLocaleDateString("en", {
         day: "numeric",

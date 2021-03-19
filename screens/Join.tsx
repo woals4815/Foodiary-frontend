@@ -7,8 +7,9 @@ import Input from "../components/Input";
 import Password from "../components/Password";
 import {useMutation} from "@apollo/client/react/hooks";
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
-import { Alert, Dimensions, Keyboard } from "react-native";
+import { Alert, Dimensions, Keyboard, KeyboardAvoidingView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import ScrollContainer from "../components/ScrollContainer";
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -43,9 +44,9 @@ const TextContainer = styled.View`
     justify-content: center;
     align-items: center;
     background-color: #FED048;
-    border-radius: 7;
-    paddingVertical: 10;
-    paddingHorizontal: 80;
+    border-radius: 7px;
+    paddingVertical: 10px;
+    paddingHorizontal: 80px;
     top: 20px;
     box-shadow: 0px 2px 2px #FED048;
 `;
@@ -129,9 +130,9 @@ const Join =  ({navigation, route}: any) => {
         register('name');
     },[register]);
     return (
-        <>
+        <KeyboardAvoidingView>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <Container>
+                <ScrollContainer>
                     <InputsContainer>
                         <TextContainer>
                             <Text>FooDiary 😋</Text>
@@ -182,9 +183,9 @@ const Join =  ({navigation, route}: any) => {
                             }}
                         />
                     </InputsContainer>
-                </Container>
+                </ScrollContainer>
             </TouchableWithoutFeedback>
-        </>
+        </KeyboardAvoidingView>
     )
 };
 

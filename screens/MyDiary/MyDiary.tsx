@@ -50,7 +50,6 @@ const MyDiary =  (props: any) => {
     useEffect(() => {
         refetch();
     }, [data]);
-    console.log(data);
     return (
         <Container>
             <ScrollContainer

@@ -9,17 +9,11 @@ const Container = styled.View`
     flex-direction: row;
     flexWrap: wrap
 `;
-const View = styled.View`
-    flex: 1;
-`
 
 const Image = styled.Image`
     height: ${WIDTH/3}px;
     width: ${WIDTH/3}px;
-`
-const Text = styled.Text`
-    font-size: 10px;
-`
+`;
 const ButtonWholeContainer = styled.View`
     position: absolute;
     flexDirection: row;
@@ -29,14 +23,21 @@ const ButtonWholeContainer = styled.View`
     bottom: 0px;
     width: 100%;
     paddingVertical: 20px;
-    paddingHorizontal: 15px;
+    paddingHorizontal: 40px;
 `;
 const ButtonContainer = styled.View`
-    background-color: blue;
+    background-color: white;
 `;
 const ButtonText= styled.Text`
-    font-size: 20px;
-`
+    font-size: 15px;
+`;
+const SelectImageContainer = styled.View`
+    height: ${WIDTH/3}px;
+    width: ${WIDTH/3}px;
+    position: absolute;
+    background-color: rgba(255,255,255,0.8);
+    z-index: 10;
+`;
 
 const CameraRoll = ({navigation, route}: any) => {
     const [selectImages, setSelectImages] = useState<any>([]);
@@ -78,9 +79,17 @@ const CameraRoll = ({navigation, route}: any) => {
         <ScrollContainer>
             <Container>
                 {imagesGotten && imagesGotten.map((image) => 
-                    <TouchableOpacity key={image.id} onPress={() => {
+                    (<TouchableOpacity key={image.id} onPress={() => {
                         onPress(image);
-                    }} ><Image source={{uri: image.uri}} key={image.id} /></TouchableOpacity>
+                    }} >
+                        {selectImages.includes(image) ? 
+                            <SelectImageContainer>
+                            </SelectImageContainer> 
+                        : <></>
+                        }
+                        <Image source={{uri: image.uri}} key={image.id} />
+                    </TouchableOpacity>
+                    )
                 )}
             </Container>    
         </ScrollContainer>

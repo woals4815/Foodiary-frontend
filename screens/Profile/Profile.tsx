@@ -150,7 +150,6 @@ const Profile = ({navigation, route: { params } }: any) => {
     const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<IFormProps>({
         mode: "onChange"
     });
-    const clientQuery = client.readQuery({ query: GET_ME_QUERY });
     const onCompleted = (data: editProfile) => {
         const {
             editProfile: {
@@ -158,26 +157,8 @@ const Profile = ({navigation, route: { params } }: any) => {
             }
         } = data;
         const { email, name } = getValues();
-        console.log("onCompleted", profilePic);
         if (ok) {
             console.log(email, name);
-            client.writeFragment({
-                id: `User:${myData?.getMe.id}`,
-                fragment: gql`
-                  fragment EditedUser on User {
-                    email
-                    name
-                    profilePic
-                  }
-                `,
-                data: {
-                  ...clientQuery.getMe,
-                  email,
-                  name,
-                  profilePic: profilePic
-                },
-              });
-            console.log(clientQuery.getMe);
             Alert.alert("Edit Success!");
         };
         if (params?.selectImages.length > 0) {
@@ -189,7 +170,6 @@ const Profile = ({navigation, route: { params } }: any) => {
     const [editProfile, {data, loading: editLoading, error: editError}] = useMutation<editProfile, editProfileVariables>(EDIT_PROFILE_MUTATION, {
         onCompleted,
     });
-    console.log("mutation error?: ",error)
     const onPressPhotho = async() => {
         const result= await MediaLibrary.getAssetsAsync({first: 300});
         const {assets: images} = result;

@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client";
 import {useLazyQuery} from "@apollo/client/react/hooks";
 import React, { useState } from "react";
-import { ActivityIndicator, Dimensions } from "react-native";
+import { ActivityIndicator, Alert, Dimensions } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import ImagePresenter from "../../components/ImagePresenter";
 import ScrollContainer from "../../components/ScrollContainer";
@@ -84,47 +85,56 @@ const SearchUser = (props: any) => {
                     }}
                     value={keyword}
                     inputStyle={{
-                        width: "90%"
+                        width: "90%",
+                        shadowColor: "gray",
+                        shadowOffset: {
+                            width: 0,
+                            height: 2
+                        },
+                        shadowOpacity: 0.7
                     }}
             />
             <ScrollContainer
-            contentContainerStyle={{
-                height: HEIGHT,
-                width: WIDTH,
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-            }}
-            refreshFn={() => {
-                setKeyword("");
-            }}
-            loading={loading}
+                contentContainerStyle={{
+                    height: HEIGHT,
+                    width: WIDTH,
+                    paddingVertical: 10,
+                    paddingHorizontal: 20,
+                }}
+                refreshFn={() => {
+                    setKeyword("");
+                }}
+                loading={loading}
             >
                 {data?.searchUser.users?.length > 0 ? (
                     <SearchContainer>
                         {data?.searchUser.users?.map(user => (
                             <>
-                                <UserContainer>
-                                    <UserProfilePicContainer>
-                                        <ImagePresenter 
-                                            imageUri={user.profilePic}
-                                            imageStyle={{
-                                                height: (WIDTH / 7),
-                                                width: (WIDTH / 7),
-                                                borderRadius: (WIDTH / 7)
-                                            }}
-                                        />
-                                    </UserProfilePicContainer>
-                                    <UserContentContainer>
-                                        <Text key={user.id} style={{fontSize: 17}}>{user.name}</Text>
-                                        <Text key={user.email} style={{fontSize: 9, fontWeight: "500"}}>{user.email}</Text>
-                                    </UserContentContainer>
-                                    {/*여기에 다이어리 개수나 무슨 추가적인 정보 ㅊ
-                                    추가해야 함*/ }
-                                </UserContainer>
+                                <TouchableOpacity onPress={() => navigation.navigate("Person Diary", { id: user.id, name: user.name })}>
+                                    <UserContainer>
+                                        <UserProfilePicContainer>
+                                            <ImagePresenter 
+                                                imageUri={user.profilePic}
+                                                imageStyle={{
+                                                    height: (WIDTH / 7),
+                                                    width: (WIDTH / 7),
+                                                    borderRadius: (WIDTH / 7)
+                                                }}
+                                            />
+                                        </UserProfilePicContainer>
+                                        <UserContentContainer>
+                                            <Text key={user.id} style={{fontSize: 17}}>{user.name}</Text>
+                                            <Text key={user.email} style={{fontSize: 9, fontWeight: "500"}}>{user.email}</Text>
+                                        </UserContentContainer>
+                                        {/*여기에 다이어리 개수나 무슨 추가적인 정보 ㅊ
+                                        추가해야 함*/ }
+                                    </UserContainer>
+                                </TouchableOpacity>
                             </>
                         ))}
                     </SearchContainer>
-                ) : <></>}
+                ) : <></>
+                }
         </ScrollContainer>
         </InputContainer>
     )
