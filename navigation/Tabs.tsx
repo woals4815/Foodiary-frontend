@@ -16,17 +16,6 @@ const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Tabs = createMaterialBottomTabNavigator();
 
-const tabBarStyles = {
-    showLabel: true,
-    // labelStyle: {
-    //     color: "black"
-    // },
-    activeBackgroundColor: "#FED048",
-    inactiveBackgroundColor: "#F9F3F3",
-    inactiveTintColor: "gray",
-    activeTintColor: "black",
-}
-
 export const getHeaderName = (route: any) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Join";
     return routeName; //route?.state?.routeNames[route.state.index] || "Movies"; (temporary solution)
@@ -47,7 +36,7 @@ export default (props: any) => {
             inactiveColor="gray"
             shifting={true}
             labeled={true}
-            barStyle={{ backgroundColor: '#E3FBFF' }}
+            barStyle={{ backgroundColor: '#F9F3F3' }}
         >
             <Tabs.Screen name="Home" component={Home}/>
             <Tabs.Screen name="Search" component={SearchUser} />

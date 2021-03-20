@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { getAllDiaries } from "../../__generated__/getAllDiaries";
-import {useQuery} from "@apollo/client/react/hooks"
+import {useLazyQuery, useQuery} from "@apollo/client/react/hooks"
 import { ActivityIndicator, Dimensions, PanResponder, Animated } from "react-native";
 import styled from "styled-components/native";
 import ScrollContainer from "../../components/ScrollContainer";
@@ -16,12 +16,12 @@ const Container = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #94B5C0;
+    background-color: #F9F3F3;
     width: ${WIDTH}px;
     height: ${HEIGHT}px;
 `
 const Text= styled.Text`
-    font-size: 20px;
+    font-size: 15px;
 `
 export const GET_ALL_DIARIES = gql`
     query getAllDiaries{
@@ -61,11 +61,16 @@ const styles = {
   width: "90%",
   position: "absolute",
 };
-export default () => {
+export default (props: any) => {
+  const {navigation, route} = props;
   const [topIndex, setTopIndex] = useState(0);
-  const {data, error, loading, refetch} = useQuery<getAllDiaries>(GET_ALL_DIARIES);
+  const [getAllDiaries ,{data, error, loading, refetch}] = useLazyQuery<getAllDiaries>(GET_ALL_DIARIES);
   const position = new Animated.ValueXY();
   const nextCard = () => setTopIndex((currentValue) => currentValue + 1);
+  const onPress= async() => {
+    await refetch();
+    setTopIndex(0);
+  }
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, { dx, dy }) => {
@@ -116,13 +121,31 @@ export default () => {
   });
   useEffect(() => {
     position.setValue({ x: 0, y: 0 });
-  }, [topIndex]);
+    getAllDiaries();
+  }, [topIndex, route]);
+  console.log("datatatata", data);
   return (
           <Container>
-            {data?.getAllDiaries.diaries?.map((diary, index) => {
+            {!loading ? data?.getAllDiaries.diaries?.map((diary, index) => {
               if (topIndex === index + 1 && topIndex === data.getAllDiaries.diaries?.length) {
                 return (
-                  <TouchableOpacity onPress={() => setTopIndex(0)} key={diary.id}>
+                  <TouchableOpacity 
+                  onPress={onPress}
+                  key={diary.id}
+                  style={{
+                    marginBottom: 200,
+                    paddingVertical: 15,
+                    paddingHorizontal: 20,
+                    backgroundColor: "white",
+                    borderRadius: 10,
+                    shadowColor: "gray",
+                        shadowOffset: {
+                            width: 0,
+                            height: 2
+                        },
+                    shadowOpacity: 0.7
+                  }}
+                  >
                     <Text key={diary.id}>Refresh</Text>
                   </TouchableOpacity>
                 )
@@ -182,7 +205,9 @@ export default () => {
                   </Animated.View>
                 );
               }
-            })}
-        </Container>
+            }) 
+            : <ActivityIndicator color="white" size="large" />
+            }
+          </Container>
   );
 }

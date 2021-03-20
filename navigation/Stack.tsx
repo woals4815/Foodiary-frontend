@@ -13,16 +13,16 @@ export default () => (
     <Stack.Navigator
         screenOptions={{
             headerStyle: {
-                backgroundColor: "#94B5C0",
-                borderBottomColor: "#94B5C0",
-                shadowColor: "#94B5C0",
+                backgroundColor: "#F9F3F3",
+                borderBottomColor: "#F9F3F3",
+                shadowColor: "#F9F3F3",
             },
             headerTitleAlign: "center"
         }}
     >
         <Stack.Screen name={"Tabs"} component={Tabs} />
         <Stack.Screen name={"CameraRoll"} component={CameraRoll} />
-        <Stack.Screen name={"MyDiary"} component={MyDiary} />
+        <Stack.Screen name={"My Diary"} component={MyDiary} />
         <Stack.Screen name={"Person Diary"} component={PersonDiary} />
         <Stack.Screen name={"One Diary"} component={OneDiary} />
     </Stack.Navigator>

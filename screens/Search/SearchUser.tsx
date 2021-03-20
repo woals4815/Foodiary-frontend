@@ -16,6 +16,7 @@ const InputContainer = styled.View`
     height: 100%;
     align-items: center;
     padding: 5px 0px;
+    background-color: #F9F3F3;
 `;
 
 const SearchContainer = styled.View`

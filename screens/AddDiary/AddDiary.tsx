@@ -16,25 +16,19 @@ import SearchInput from "../../components/SearchInput";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
-const Container = styled.View`
-    flex-direction: column;
-    align-items: center;
-    background-color: white;
-    flex: 1;
-`;
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
     height: ${HEIGHT}px;
-    background-color: #94B5C0;
+    background-color: #F9F3F3;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 0px 4px #94B5C0;
+    box-shadow: 0px 0px 4px #F9F3F3;
     paddingHorizontal: 20px;
 `
 const ImageContainer = styled.View`
     width: 100%;
-    height: ${HEIGHT / 2}px;
-    padding-bottom: 30px;
+    height: ${HEIGHT/2};
+    background-color: rgba(0,0,0,0.1);
 `;
 const DescriptionContainer = styled.View`
     height: ${HEIGHT/4}px;
@@ -82,6 +76,7 @@ const ButtonContainer = styled.View`
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    padding: 5px 0px 0px 0px
 `;
 const ButtonText=styled.Text`
     font-size: 20px;
@@ -125,7 +120,7 @@ const AddDiary =  (props: any) => {
                     text: "OK",
                     onPress: () => {
                         navigation.navigate({
-                            name: 'MyDiary'
+                            name: 'My Diary'
                         });
                     },
                 },
@@ -211,7 +206,8 @@ const AddDiary =  (props: any) => {
               loading={loading}
               contentContainerStyle={{
                   height: HEIGHT,
-                  width: WIDTH
+                  width: WIDTH,
+                  backgroundColor: "#F9F3F3"
               }}
             >
                 <InputsContainer>
@@ -219,7 +215,7 @@ const AddDiary =  (props: any) => {
                     {images.length > 0 && (
                         <>
                                 <Swiper 
-                                showsButtons={false} 
+                                showsButtons={true} 
                                 paginationStyle={{
                                     bottom: -25
                                 }}
@@ -228,9 +224,7 @@ const AddDiary =  (props: any) => {
                                         <ImagePresenter 
                                             imageUri={image.uri} 
                                             key={image.id}  
-                                            imageStyle={{
-                                                height: HEIGHT / 2
-                                            }}
+                                            resizeMode={"contain"}
                                         />
                                     ))}
                                 </Swiper>

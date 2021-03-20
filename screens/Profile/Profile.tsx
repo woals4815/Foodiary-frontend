@@ -15,6 +15,7 @@ import { getMe } from "../../__generated__/getMe";
 import * as MediaLibrary from 'expo-media-library';
 import { getMyDiaries } from "../../__generated__/getMyDiaries";
 import axios from "axios";
+import DeleteButton from "../../components/DeleteButton";
 
 export const GET_ME_QUERY = gql`
     query getMe{
@@ -45,7 +46,7 @@ const EDIT_PROFILE_MUTATION = gql`
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
-    background-color: #94B5C0;
+    background-color: #F9F3F3;
     height: ${HEIGHT/1.2}px;
     width: ${WIDTH}px;
     flex-direction: column;
@@ -98,7 +99,7 @@ const MyDiaryContainer =styled.View`
     flex-direction: row;
     flex: 2;
     paddingHorizontal: 40px;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 `;
 
@@ -309,6 +310,22 @@ const Profile = ({navigation, route: { params } }: any) => {
                             }}
                         >My Diary: </MyDiaryText>
                         <MyDiaryText>{myData?.getMyDiaries.myDiaries?.length} diaries</MyDiaryText>
+                        <JoinButton 
+                            title={"My Diary"}
+                            onPress={() => navigation.navigate("My Diary", { myData })}
+                            buttonStyle={{
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                backgroundColor: "#FED048",
+                                borderRadius: "8px",
+                                shadowColor: "gray",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1
+                                    },
+                                shadowOpacity: 0.7,
+                            }}
+                        />
                     </MyDiaryContainer>
                     {isEdit? 
                     <SubmitContaier>

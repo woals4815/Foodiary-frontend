@@ -1,168 +1,131 @@
-import React, { useEffect } from "react";
-import { Dimensions } from "react-native";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react/hooks";
+import React from "react";
+import { ActivityIndicator, Alert, Dimensions, ScrollView } from "react-native";
 import Swiper from "react-native-swiper";
 import styled from "styled-components/native";
 import { formatDate } from "../utils";
+import { deleteDiary, deleteDiaryVariables } from "../__generated__/deleteDiary";
+import DeleteButton from "./DeleteButton";
 import ImagePresenter from "./ImagePresenter";
-
+import ScrollContainer from "./ScrollContainer";
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
-const commonStyle = {
-    "border-radius": "7px",
-    "box-shadow": "0px 0px 4px gray",
-    "backround-color-white": "#F6F5F5",
-    "padding": "4px"
-};
+
+const DELETE_DIARY_MUTATION = gql`
+    mutation deleteDiary($deleteDiaryInput: DeleteDiaryInput!){
+        deleteDiary(input: $deleteDiaryInput){
+            error
+            ok
+        }
+    }
+`;
 
 const Container = styled.View`
-    flex: 1;
-    align-items: center;
-    background-color:#94B5C0;
-`;
-const CardContainer = styled.View`
-    width: ${WIDTH / 1.2}px;
-    height: ${HEIGHT/ 1.3}px;
-    border-radius: 14px;
-    margin-top: 30px;
-    background-color: #94B5C0;
-    flex: 1;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0px 0px 4px #94B5C0;
+    height: ${HEIGHT}px;
+    width: ${WIDTH}px;
 `;
 const ImageContainer = styled.View`
-    width: ${WIDTH / 1.4}px;
-    height: ${HEIGHT / 3.3}px;
-    margin-top: 20px;
-    margin-left: 7px;
-    box-shadow: 0px 0px 4px black;
-    border-radius: 7px;
+    background-color: rgba(0,0,0,0.1);
+    height: ${HEIGHT/2}px;
+`;
+const DataContainer = styled.View`
+    height: 50%;
+    padding: 0px 5px;
+`;
+const DateContainer = styled.View`
+    height: 8%;
+    position: absolute;
+    right: 5px;
+    top: 5px;
 `;
 const DescriptionContainer = styled.View`
-    width: ${WIDTH/ 1.4}px;
-    height: ${HEIGHT / 4.5}px;
-    margin-top: 20px;
-    border-radius: ${commonStyle["border-radius"]};
-    background-color: ${commonStyle["backround-color-white"]};
-    box-shadow: ${commonStyle["box-shadow"]};
-    padding: ${commonStyle.padding};
+    height: 70%;
+    padding: 20px 0px 0px 0px;
+
 `;
-const DescriptionTitleContainer = styled.View`
-    height: 20px;
-    width: ${WIDTH/ 4}px;
-    background-color: gray;
+const Label = styled.View`
+    height: 10%;
+    align-items: flex-start;
     justify-content: center;
-    align-items: center;
-    border-radius: 4px;
 `;
-const RatingContainer = styled.View`
-    width: ${WIDTH / 1.4}px;
-    height: ${HEIGHT / 30}px;
-    border-radius: ${commonStyle["border-radius"]};
-    background-color: ${commonStyle["backround-color-white"]};
-    box-shadow: ${commonStyle["box-shadow"]};
-    padding: ${commonStyle.padding};
-    flex-direction: row;
-    align-items: center;
-`;
-const RatingTitleContainer = styled.View`
-    height: 20px;
-    width: ${WIDTH/ 7}px;
-    background-color: gray;
-    justify-content: center;
-    border-radius: 4px;
-    align-items: center;
-    margin-right: 7px;
-`;
-const PublicOrNotContainer = styled.View`
-    width: ${WIDTH / 1.4}px;
-    height: ${HEIGHT / 30}px;
-    border-radius: ${commonStyle["border-radius"]};
-    background-color: ${commonStyle["backround-color-white"]};
-    box-shadow: ${commonStyle["box-shadow"]};
-    flex-direction: row;
-    align-items:center;
-    padding: ${commonStyle.padding};
-`;
-const PublicTitleContainer = styled.View`
-    height: 20px;
-    width: ${WIDTH/ 7}px;
-    background-color: gray;
-    justify-content: center;
-    border-radius: 4px;
-    align-items: center;
-    margin-right: 7px;
-`;
-const CreateDateContainer = styled.View`
-    width: ${WIDTH / 1.4}px;
-    height: ${HEIGHT / 30}px;
-    border-radius: ${commonStyle["border-radius"]};
-    background-color: ${commonStyle["backround-color-white"]};
-    box-shadow: ${commonStyle["box-shadow"]};
-    margin-bottom: 13px;
-    flex-direction: row;
-    align-items: center;
-    padding: ${commonStyle.padding};
-`;
-const CreateDateTitleContainer = styled.View`
-    height: 20px;
-    width: ${WIDTH/ 4}px;
-    background-color: gray;
-    justify-content: center;
-    border-radius: 4px;
-    align-items: center;
-    margin-right: 7px;
-`;
-const TitleText= styled.Text`
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-`;
-const Text= styled.Text`
-    font-size: 14px;
-    font-weight: 500;
-`;
-const DiaryCard = ({images, description, rating, publicOrNot, createdAt}: any) => {
+
+const Text = styled.Text``;
+
+const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn}: any) => {
+    const onCompleted = (data: deleteDiary) => {
+        const { deleteDiary: {
+            ok, error
+        }} = data;
+        if (ok) {
+            Alert.alert("Deleted the Diary", '', [
+                {
+                    text: "Ok",
+                    onPress: () => {
+                        refreshFn();
+                    }
+                }
+            ])
+        }
+    };
+    const [deleteDiary, {data, error, loading}] = useMutation<deleteDiary, deleteDiaryVariables>(DELETE_DIARY_MUTATION, {
+        onCompleted
+    });
+    const onPress = () => {
+        Alert.alert("Delete Diary", "Are you sure?",[
+            {
+                text: "Delete",
+                onPress: async() => {
+                    try {
+                        await deleteDiary({
+                            variables: {
+                                deleteDiaryInput: { diaryId }
+                            }
+                        })
+                    }catch(error){
+                        console.log(error);
+                    }
+                }
+            },
+            {
+                text: "No",
+                onPress: () => null,
+            }
+        ])
+    }
     return (
         <Container>
-            <CardContainer>
-                <ImageContainer>
-                    <Swiper 
-                    showsButtons={false} 
-                    loop
-                    paginationStyle={{
-                        bottom: -25
-                    }}
-                    >
-                        {images?.map((image: any, index: any): any => (
-                            <ImagePresenter imageUri={image} key={index} />
-                        ))}
-                    </Swiper>
-                </ImageContainer>
+            <ImageContainer>
+              <Swiper
+                showsButtons={true}
+                paginationStyle={{
+                    bottom: -20
+                }}
+              >
+                {images.map((image: any, index: any) => (
+                    <ImagePresenter 
+                        imageUri={image}
+                        resizeMode={"contain"}
+                        key={index}
+                    />
+                ))}
+              </Swiper>
+            </ImageContainer>
+            <DataContainer>
+                <DateContainer>
+                    <Text style={{fontWeight: "500"}}>{formatDate(createdAt)}</Text>
+                </DateContainer>
                 <DescriptionContainer>
-                    <DescriptionTitleContainer>
-                        <TitleText>Description</TitleText>
-                    </DescriptionTitleContainer>
-                    <Text>{description}</Text>
+                    <Label>
+                        <Text>Description</Text>
+                    </Label>
+                    <ScrollContainer contentContainerStyle={{paddingVertical: 5, borderWidth: 0.3, paddingHorizontal: 5, borderRadius: 5}}>
+                        <Text>
+                            {description}
+                        </Text>
+                    </ScrollContainer>
                 </DescriptionContainer>
-                <RatingContainer>
-                    <RatingTitleContainer>
-                        <TitleText>Rating</TitleText>
-                    </RatingTitleContainer>
-                    <Text>{`${rating} / 5`}</Text>
-                </RatingContainer>
-                <PublicOrNotContainer>
-                    <PublicTitleContainer>
-                        <TitleText>Public</TitleText>
-                    </PublicTitleContainer>
-                    <Text>{`${publicOrNot}`}</Text>
-                </PublicOrNotContainer>
-                <CreateDateContainer>
-                    <CreateDateTitleContainer>
-                        <TitleText>Created date</TitleText>
-                    </CreateDateTitleContainer>
-                    <Text>{formatDate(createdAt)}</Text>
-                </CreateDateContainer>
-            </CardContainer>
+                
+            </DataContainer>
         </Container>
     )
 }

@@ -22,6 +22,10 @@ export interface CreateDiaryInput {
   rating?: number | null;
 }
 
+export interface DeleteDiaryInput {
+  diaryId: number;
+}
+
 export interface EditProfileInput {
   confirmPassword?: string | null;
   email?: string | null;
