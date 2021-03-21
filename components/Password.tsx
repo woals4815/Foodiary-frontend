@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 const TextInput = styled.TextInput`
     background-color: transparent;
     color: black;
-    borderBottomWidth : 1.5px;
+    borderBottomWidth : 1px;
     font-size: 20px;
     border-color: gray;
 `

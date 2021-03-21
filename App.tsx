@@ -1,7 +1,6 @@
 import { ApolloProvider, useReactiveVar } from '@apollo/client';
-import { StatusBar } from 'expo-status-bar';
 import {Image} from "react-native";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as Font from "expo-font";
 import styled from 'styled-components/native';
 import { client, isLoggedInVar } from './apollo';
@@ -11,7 +10,6 @@ import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from "@react-navigation/native";
 import Stack from './navigation/Stack';
 import { registerRootComponent } from 'expo';
-import Drawer from './navigation/Drawer';
 
 
 
@@ -21,18 +19,18 @@ const Text = styled.Text`
   margin-left: 100px;
   margin-top: 100px
 `
-const cacheImages = (images:any) => {
-  return images.map((image:any) => {
+const cacheImages = (images:any) => 
+  images.map((image:any) => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
     } else {
       return Asset.fromModule(image).downloadAsync();
     }
   });
-}
-const cacheFonts = (fonts: any) => {
-  return fonts.map((font: any) => [Font.loadAsync(font), Font.loadAsync(font)]);
-}
+
+const cacheFonts = (fonts: any) => 
+  fonts.map((font: any) => [Font.loadAsync(font), Font.loadAsync(font)]);
+
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const loadAssets = async() => {

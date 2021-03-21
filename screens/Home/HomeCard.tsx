@@ -43,7 +43,7 @@ const ContentTitleContainer = styled.View`
 `;
 const ContentLabelContainer = styled.View`
     width: 80%;
-    height: 15%;
+    height: 10%;
     background-color: gray;
     flex-direction: column;
     border-radius: 20px;

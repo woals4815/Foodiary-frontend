@@ -115,7 +115,6 @@ const PersonDiary = (props: any) => {
                 paddingTop: 10,
                 paddingBottom: 10,
                 backgroundColor: "#F9F3F3",
-                height: HEIGHT,
             }}
             loading={loading}
             refreshFn={refetch}

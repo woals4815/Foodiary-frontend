@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import JoinButton from "../../components/Button";
 import DiaryCard from "../../components/DiaryCard";
@@ -37,14 +37,7 @@ export const GET_MY_DIARIES_QUERY = gql`
     }
 `;
 
-const DELETE_DIARY_MUTATION = gql`
-    mutation deleteDiary($deleteDiaryInput: DeleteDiaryInput!){
-        deleteDiary(input: $deleteDiaryInput){
-            error
-            ok
-        }
-    }
-`;
+
 
 const Text = styled.Text`
     font-size: 20px;
@@ -66,16 +59,17 @@ const ListButton = styled.View`
     z-index: 10;
     top: 5;
     right: 5;
-    border-radius: 10;
+    border-radius: 20px;
     background-color: skyblue;
     box-shadow: 0px 0px 3px gray;
+    border: 2.5px;
+    borderColor: #F9F3F3;
 `;
 
 const MyDiary =  (props: any) => {
     const { navigation, route } = props;
     const [isList, setIsList] = useState(false);
     let { data, loading, error, refetch} = useQuery<getMyDiaries>(GET_MY_DIARIES_QUERY);
-    console.log(data?.getMyDiaries.myDiaries);
     useEffect(() => {
         refetch();
     }, [data]);
@@ -86,27 +80,33 @@ const MyDiary =  (props: any) => {
                     <Text style={{fontSize: 13}}>{isList ? "Full" : "List"}</Text>
                 </ListButton>
             </TouchableOpacity>
-            <ScrollContainer
-                loading={loading}
-                refreshFn={refetch}
-                contentContainerStyle={{
-                    width: WIDTH,
-                    backgroundColor: "#F9F3F3",
-                }}
+            {!loading?
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
-                    <DiaryCard 
-                        images={diary.images}
-                        description={diary.description}
-                        rating={diary.rating}
-                        publicOrNot={diary.publicOrNot}
-                        createdAt={diary.createdAt}
-                        key={diary.id}
-                        diaryId={diary.id}
-                        refreshFn={refetch}
-                    />
-                ))}
-            </ScrollContainer>
+                <ScrollContainer
+                    loading={loading}
+                    refreshFn={refetch}
+                    contentContainerStyle={{
+                        width: WIDTH,
+                        backgroundColor: "#F9F3F3",
+                    }}
+                >
+                    {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
+                        <DiaryCard 
+                            images={diary.images}
+                            description={diary.description}
+                            rating={diary.rating}
+                            publicOrNot={diary.publicOrNot}
+                            createdAt={diary.createdAt}
+                            key={diary.id}
+                            diaryId={diary.id}
+                            refreshFn={refetch}
+                        />
+                    ))}
+                    </ScrollContainer>
+            </KeyboardAvoidingView> 
+            : <ActivityIndicator size="large" color="black" />}
         </>
     )
 }

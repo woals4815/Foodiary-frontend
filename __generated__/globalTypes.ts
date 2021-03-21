@@ -26,6 +26,14 @@ export interface DeleteDiaryInput {
   diaryId: number;
 }
 
+export interface EditDiaryInput {
+  description?: string | null;
+  diaryId: number;
+  images?: string[] | null;
+  publicOrNot?: boolean | null;
+  rating?: number | null;
+}
+
 export interface EditProfileInput {
   confirmPassword?: string | null;
   email?: string | null;

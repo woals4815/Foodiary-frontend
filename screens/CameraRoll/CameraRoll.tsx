@@ -79,9 +79,11 @@ const CameraRoll = ({navigation, route}: any) => {
         <ScrollContainer>
             <Container>
                 {imagesGotten && imagesGotten.map((image) => 
-                    (<TouchableOpacity key={image.id} onPress={() => {
+                    (
+                    <TouchableOpacity key={image.id} onPress={() => {
                         onPress(image);
-                    }} >
+                    }} 
+                    >
                         {selectImages.includes(image) ? 
                             <SelectImageContainer>
                             </SelectImageContainer> 

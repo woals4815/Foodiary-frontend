@@ -22,12 +22,12 @@ const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn }
                 <RefreshControl 
                     onRefresh={onRefresh}
                     refreshing={refresh}
-                    enabled={false}
-                    tintColor={"white"}
+                    enabled={true}
+                    tintColor={"black"}
                 />
             }
         >
-            {loading? <ActivityIndicator color="white" size="small" />:children}
+            {loading? <ActivityIndicator color="black" size="small" />:children}
         </ScrollView>
     );
 };

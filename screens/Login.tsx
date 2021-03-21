@@ -9,7 +9,7 @@ import Password from "../components/Password";
 import AsyncStorage from "@react-native-community/async-storage";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { authTokenVar, isLoggedInVar } from "../apollo";
-import { Dimensions, Keyboard } from "react-native";
+import { ActivityIndicator, Dimensions, Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
@@ -20,7 +20,7 @@ const Container = styled.View`
     width:${WIDTH}px;
     align-items:center;
     justify-content: flex-start;
-    background-color: white;
+    background-color: #F9F3F3;
 `
 const TextContainer = styled.View`
     flex-direction: column;
@@ -36,9 +36,8 @@ const TextContainer = styled.View`
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
     height: ${HEIGHT}px;
-    background-color: #94B5C0;
+    background-color: #F9F3F3;
     align-items: center;
-    box-shadow: 0px 0px 4px #94B5C0;
 `;
 const InputContainer = styled.View`
     width: ${WIDTH / 1.5}px;
@@ -60,11 +59,15 @@ const LOGIN_MUTATION = gql`
     }
 `;
 
+interface ILoginForm {
+    email: string;
+    password: string;
+};
+
 const Login =  () => {
-    const {setValue, errors, register, handleSubmit, getValues} = useForm({
+    const {setValue, errors, register, handleSubmit, getValues, formState} = useForm<ILoginForm>({
         mode: 'onChange'
     });
-    
     const onCompleted = async(data: loginMutation) => {
             try{
             const {
@@ -79,7 +82,7 @@ const Login =  () => {
             }}catch(error){
                 console.log(error);
             }
-    }
+    };
     const [loginMutation, {data, loading, error}] = useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
         onCompleted
     });
@@ -100,30 +103,33 @@ const Login =  () => {
             }
         }
         return;
-    }
+    };
     useEffect(() => {
         register('email');
         register('password');
     }, [register]);
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            {!loading ? 
             <Container>
-            <InputsContainer>
+                <InputsContainer>
                 <TextContainer>
                     <Text>FooDiary</Text>
                 </TextContainer>
                 <InputContainer>
                     <Input
-                            placeholder={"Email"}
-                            onChange={(text: string) => {
-                                setValue('email', text);
-                            }}
+                        placeholder={"Email"}
+                        onChange={(text: string) => {
+                            setValue('email', text);
+                        }}
+                        register={register}
                     />
                     <Password
-                            placeholder={"Password"}
-                            onChange={(text: string) => {
-                                setValue('password', text);
-                            }}
+                        placeholder={"Password"}
+                        onChange={(text: string) => {
+                            setValue('password', text);
+                        }}
+                        register={register}
                     />
                 </InputContainer>
                 <JoinButton 
@@ -146,8 +152,12 @@ const Login =  () => {
                     }}
                 />
             </InputsContainer>
-        </Container>
-    </TouchableWithoutFeedback>
+            </Container> : 
+            <Container>
+                <ActivityIndicator color="black" size="large" style={{marginTop: "75%"}} />
+            </Container>    
+            }
+        </TouchableWithoutFeedback>
     )
 };
 

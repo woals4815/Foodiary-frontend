@@ -7,9 +7,10 @@ import Input from "../components/Input";
 import Password from "../components/Password";
 import {useMutation} from "@apollo/client/react/hooks";
 import { createAccountMutation, createAccountMutationVariables } from "../__generated__/createAccountMutation";
-import { Alert, Dimensions, Keyboard, KeyboardAvoidingView } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import ScrollContainer from "../components/ScrollContainer";
+import { Ionicons } from '@expo/vector-icons'; 
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -37,7 +38,7 @@ const Container = styled.View`
     width:${WIDTH}px;
     align-items:center;
     justify-content: flex-start;
-    background-color: white;
+    background-color: #F9F3F3;
 `;
 const TextContainer = styled.View`
     flex-direction: column;
@@ -53,10 +54,9 @@ const TextContainer = styled.View`
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
     height: ${HEIGHT}px;
-    background-color: #94B5C0;
+    background-color: #F9F3F3;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0px 0px 4px #94B5C0;
 `;
 const InputContainer = styled.View`
     width: ${WIDTH / 1.5}px;
@@ -133,7 +133,7 @@ const Join =  ({navigation, route}: any) => {
         <KeyboardAvoidingView>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <ScrollContainer>
-                    <InputsContainer>
+                    {!loading ?<InputsContainer>
                         <TextContainer>
                             <Text>FooDiary 😋</Text>
                         </TextContainer>
@@ -183,6 +183,7 @@ const Join =  ({navigation, route}: any) => {
                             }}
                         />
                     </InputsContainer>
+                    :<ActivityIndicator color="black" size="large" style={{marginTop: "75%"}} />}
                 </ScrollContainer>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

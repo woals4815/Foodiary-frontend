@@ -25,7 +25,7 @@ export default (props: any) => {
     useLayoutEffect(() => {
         const title = getHeaderName(route);
         navigation.setOptions({
-          title: title === "Search" ? "Search User": title,
+          title: title === "Search" ? "친구 찾기": title,
         });
       }, [route]);
     const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -36,7 +36,28 @@ export default (props: any) => {
             inactiveColor="gray"
             shifting={true}
             labeled={true}
-            barStyle={{ backgroundColor: '#F9F3F3' }}
+            barStyle={{ backgroundColor: '#F9F3F3'}}
+            screenOptions={({route}) => ({
+                tabBarIcon: ({focused}) => {
+                    let iconName;
+                    if (route.name === "Home") {
+                      iconName = "ios-home-sharp";
+                    } else if (route.name === "Add Diary") {
+                      iconName = "add-circle";
+                    } else if (route.name === "Search") {
+                      iconName = "search";
+                    } else if (route.name === "Profile") {
+                      iconName = "ios-person";
+                    }
+                    return (
+                      <Ionicons
+                        name={iconName}
+                        color={focused ? "black" : "grey"}
+                        size={26}
+                      />
+                    );
+                  },
+            })}
         >
             <Tabs.Screen name="Home" component={Home}/>
             <Tabs.Screen name="Search" component={SearchUser} />
@@ -48,8 +69,26 @@ export default (props: any) => {
         initialRouteName="Join"
         activeColor="black"
         inactiveColor="gray"
-        barStyle={{ backgroundColor: '#E3FBFF' }}
+        barStyle={{ backgroundColor: '#F9F3F3' }}
         shifting={true}
+        screenOptions={({route}) => ({
+            tabBarIcon: ({focused}) => {
+                let iconName;
+                if (route.name === "Join") {
+                  iconName = "create";
+                } else if (route.name === "Login") {
+                  iconName = "log-in";
+                }
+                return (
+                  <Ionicons
+                    name={iconName}
+                    color={focused ? "black" : "grey"}
+                    size={26}
+                    
+                  />
+                );
+              },
+        })}
     >
         <Tabs.Screen name="Join" component={Join} />
         <Tabs.Screen name="Login" component={Login} />

@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 const TextInput = styled.TextInput`
     background-color: transparent;
     color: black;
-    borderBottomWidth : 1.5px;
+    borderBottomWidth : 1px;
     font-size: 20px;
     border-color: gray;
 `
@@ -13,7 +13,7 @@ const View = styled.View`
     width: 100%;
 `; 
 
-const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue}: any) => {
+const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue, register}: any) => {
    const [isFocused, setIsFocused] = useState(false);
    return( 
         <TouchableWithoutFeedback
@@ -32,6 +32,8 @@ const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue}: any
                     setIsFocused(false);
                 }}
                 defaultValue={defaultValue}
+                ref={register}
+                autoCompleteType={"off"}
                 />
             </View>
         </TouchableWithoutFeedback>

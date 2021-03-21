@@ -12,24 +12,15 @@ const ButtonContainer = styled.View`
     padding: 7px 10px;
     border-radius: 20px;
     background-color: red;
-    margin-left: 10px;
-    box-shadow: 0px 0px 3px gray;
+    box-shadow: 0px 0px 1px gray;
 `;
 
-const DELETE_DIARY_MUTATION = gql`
-    mutation deleteDiary($deleteDiaryInput: DeleteDiaryInput!){
-        deleteDiary(input: $deleteDiaryInput){
-            error
-            ok
-        }
-    }
-`;
 
 const DeleteButton = ({buttonStyle, onPress}: any) => {
     return (
         <TouchableOpacity style={{...buttonStyle}} onPress={onPress}>
             <ButtonContainer>
-                <Text>X</Text>
+                <Text>Delete</Text>
             </ButtonContainer>
         </TouchableOpacity>
     );
