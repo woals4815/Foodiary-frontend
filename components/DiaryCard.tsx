@@ -2,16 +2,19 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Dimensions, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
-import Swiper from "react-native-swiper";
+import { Alert, Dimensions, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { formatDate } from "../utils";
 import { deleteDiary, deleteDiaryVariables } from "../__generated__/deleteDiary";
 import { editDiary, editDiaryVariables } from "../__generated__/editDiary";
 import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 import ImagePresenter from "./ImagePresenter";
 import Input from "./Input";
 import ScrollContainer from "./ScrollContainer";
+import SubmitButton from "./SubmitButton";
+
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const DELETE_DIARY_MUTATION = gql`
@@ -31,49 +34,34 @@ const EDIT_DIARY_MUTATION = gql`
     }
 `;
 
-const Container = styled.View`
-    height: ${HEIGHT}px;
+const CardContainer = styled.View`
+    height: ${HEIGHT/1.1}px;
     width: ${WIDTH}px;
+    flex: 1;
 `;
 const ImageContainer = styled.View`
-    background-color: #F9F3F3;
-    height: ${HEIGHT/2}px;
-    marginBottom: 5px;
-`;
-const DataContainer = styled.View`
-    height: 50%;
-    padding: 0px 10px;
-`;
-const DateContainer = styled.View`
-    paddingHorizontal: 5px;
-    borderBottomWidth: 0.3px;
-    marginBottom: 20px;
-    paddingBottom: 10px;
-`;
-const RateContainer = styled.View`
-    height: 5%;
-    width: 25%;
-    padding: 0px 5px;
-    border-radius: 5px;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    box-shadow: 0px 0px 1px gray;
 `;
 const DescriptionContainer = styled.View`
-    height: 70%;
-    padding: 20px 5px 0px 5px;
+    height: ${HEIGHT/3}px;
+    border-radius: 10px;
+    margin: 10px 5px 10px 5px;
+    background-color: white;
+    box-shadow: 0px 0px 2px gray;
 `;
-const Label = styled.View`
-    height: 10%;
-    align-items: center;
+
+const DateContainer = styled.View`
+    borderBottomWidth: 0.3px;
+    padding: 10px 10px;
+`;
+const AddPhotoContainer = styled.View`
+    width: ${WIDTH / 3}px;
+    height: ${WIDTH / 3}px;
+    border-radius: 10px;
+    background-color: #D2E0EA;
     justify-content: center;
-    marginTop: 5px;
+    align-items: center;
 `;
-const ButtonContainer = styled.View`
-    flex-direction: row;
-    justify-content: space-between;
-`;
+
 
 const Text = styled.Text``;
 
@@ -120,7 +108,8 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
     });
     const editOnSubmit = async() => {
         const { description } = getValues();
-        try{    await editDiary({
+        try{    
+            await editDiary({
                 variables: {
                     editDiaryInput: {
                         diaryId,
@@ -159,105 +148,82 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
         register("description");
     }, [register]);
     return (
-        <Container>
-            <DateContainer>
-                <Text style={{fontWeight: "200", fontSize: 25}}>{formatDate(createdAt)}</Text>
-            </DateContainer>
-            <ImageContainer>
-              <Swiper
-                showsButtons={false}
-                paginationStyle={{
-                    bottom: -15
-                }}
-              >
-                {images.map((image: any, index: any) => (
-                    <ImagePresenter 
-                        imageUri={image}
-                        resizeMode={"contain"}
-                        key={index}
-                    />
-                ))}
-              </Swiper>
-            </ImageContainer>
-            <DataContainer>
-                <RateContainer>
-                    <Text style={{fontSize: 10}}>{"⭐️".repeat(rating)}</Text>
-                </RateContainer>
-                    <DescriptionContainer>
-                    <ButtonContainer>
-                        <TouchableOpacity 
-                            style={{
-                                paddingVertical: 7, 
-                                paddingHorizontal: 10, 
-                                borderRadius: 20, 
-                                backgroundColor: "#FED048",
-                                shadowColor: "gray",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 1
-                                },
-                                shadowOpacity: 0.5,
-                            }}
-                            onPress={editOnPress}
-                        >
-                            <Text>{isEdit? "Cancel": "Edit"}</Text>
-                        </TouchableOpacity>
-                        <DeleteButton 
-                        onPress={onPress}
-                        />
-                    </ButtonContainer>
-                    <Label>
-                        <Text>이 날의 맛집 일기</Text>
-                    </Label>
-                    <ScrollContainer 
-                        contentContainerStyle={{
-                            paddingVertical: 5, 
-                            paddingHorizontal: 5, 
-                            borderRadius: 5, 
-                            backgroundColor: "white",
-                            }}
-                    >
-                        {!isEdit ?
-                        (
-                        <Text>
-                            {description}
-                        </Text>
-                        ): <Input
+           <CardContainer>
+                <DateContainer>
+                    <Text style={{fontSize: 30, fontWeight: "300"}}>{formatDate(createdAt)}</Text>
+                </DateContainer>
+                <DescriptionContainer>
+                    <ScrollContainer contentContainerStyle={{
+                        paddingHorizontal: 5, 
+                        paddingVertical: 5, 
+                        borderRadius: 10,
+                    }}>
+                        {!isEdit ? <Text>{description}</Text>: 
+                        <Input 
                           defaultValue={description}
                           multiline={true}
                           inputStyle={{
-                              fontSize: 16,
-                          }}
-                          onChange={(text: any) => setValue("description", text)}
-                          
+                              height: "100%",
+                              fontSize: 14
+                          }} 
                         />
-                        }
+                    }
                     </ScrollContainer>
-                    {isEdit ?  
-                        <TouchableOpacity 
-                            style={{
-                                marginTop: 10, 
-                                backgroundColor: "#FED048",
-                                paddingVertical: 7, 
-                                paddingHorizontal: 10, 
-                                borderRadius: 20, 
-                                shadowColor: "gray",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 1
-                                },
-                                shadowOpacity: 0.5,
-                                justifyContent: "center",
-                                alignItems: "center"
-                                }}
-                            onPress={editOnSubmit}
-                        >
-                            <Text>Submit</Text>
-                        </TouchableOpacity>
-                    : <></>}
                 </DescriptionContainer>
-            </DataContainer>
-        </Container>
+                <ImageContainer>
+                    <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5}} showsHorizontalScrollIndicator={false}>
+                        <>
+                            {images.map((image:any) => (
+                                <ImagePresenter imageUri={image} imageStyle={{width: WIDTH / 3, height: WIDTH / 3, marginRight: 10, borderRadius: 10}} />
+                            ))}
+                            {isEdit? 
+                            <AddPhotoContainer>
+                                <Ionicons
+                                    name={"add"}
+                                    color={"gray"}
+                                    size={50}
+                                />
+                            </AddPhotoContainer>: 
+                            <></>}
+                        </>
+                    </ScrollView>
+                </ImageContainer>
+                <EditButton
+                    title={isEdit ? "Cancel": "Edit"} 
+                    buttonStyle={{
+                        width: "20%",
+                        alignItems: "center",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                    }}
+                    onPress={editOnPress}
+                />
+                {isEdit? 
+                    <SubmitButton 
+                      title={"Submit"} 
+                      buttonStyle={{
+                          width: "20%",
+                          position: "absolute",
+                          alignItems: "center",
+                          bottom: 0,
+                          right: "40%"
+                      }}
+                      onPress={editOnSubmit}
+                    /> 
+                    : <></> 
+                }
+                <DeleteButton
+                    buttonStyle={{
+                        width: "20%",
+                        alignItems: "center",
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0,
+                    }}
+                    onPress={onPress} 
+                />
+           </CardContainer>
     )
 }
 

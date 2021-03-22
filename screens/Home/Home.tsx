@@ -123,7 +123,6 @@ export default (props: any) => {
     position.setValue({ x: 0, y: 0 });
     getAllDiaries();
   }, [topIndex, route]);
-  console.log("datatatata", data);
   return (
           <Container>
             {!loading ? data?.getAllDiaries.diaries?.map((diary, index) => {

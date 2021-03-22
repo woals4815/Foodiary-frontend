@@ -37,17 +37,8 @@ export const GET_MY_DIARIES_QUERY = gql`
     }
 `;
 
-
-
 const Text = styled.Text`
     font-size: 20px;
-`;
-const Container = styled.View`
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #F9F3F3;
-    height: 100%;
 `;
 
 const ListButton = styled.View`
@@ -74,7 +65,13 @@ const MyDiary =  (props: any) => {
         refetch();
     }, [data]);
     return (
-        <>
+        <ScrollContainer
+            loading={loading}
+            refreshFn={refetch}
+            contentContainerStyle={{
+                paddingBottom: 10
+            }}
+        >
             <TouchableOpacity style={{zIndex: 10}}>
                 <ListButton>
                     <Text style={{fontSize: 13}}>{isList ? "Full" : "List"}</Text>
@@ -84,30 +81,21 @@ const MyDiary =  (props: any) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                <ScrollContainer
-                    loading={loading}
-                    refreshFn={refetch}
-                    contentContainerStyle={{
-                        width: WIDTH,
-                        backgroundColor: "#F9F3F3",
-                    }}
-                >
-                    {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
-                        <DiaryCard 
-                            images={diary.images}
-                            description={diary.description}
-                            rating={diary.rating}
-                            publicOrNot={diary.publicOrNot}
-                            createdAt={diary.createdAt}
-                            key={diary.id}
-                            diaryId={diary.id}
-                            refreshFn={refetch}
-                        />
-                    ))}
-                    </ScrollContainer>
+                {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
+                    <DiaryCard 
+                        images={diary.images}
+                        description={diary.description}
+                        rating={diary.rating}
+                        publicOrNot={diary.publicOrNot}
+                        createdAt={diary.createdAt}
+                        key={diary.id}
+                        diaryId={diary.id}
+                        refreshFn={refetch}
+                    />
+                ))}
             </KeyboardAvoidingView> 
             : <ActivityIndicator size="large" color="black" />}
-        </>
+        </ScrollContainer>
     )
 }
 

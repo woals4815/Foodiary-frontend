@@ -53,7 +53,7 @@ export default (props: any) => {
                       <Ionicons
                         name={iconName}
                         color={focused ? "black" : "grey"}
-                        size={26}
+                        size={24}
                       />
                     );
                   },
@@ -83,7 +83,7 @@ export default (props: any) => {
                   <Ionicons
                     name={iconName}
                     color={focused ? "black" : "grey"}
-                    size={26}
+                    size={24}
                     
                   />
                 );

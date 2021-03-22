@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
-import styled from "styled-components/native";
 
 
-const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn }: any) => {
+const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn,horizontal }: any) => {
     const [refresh, setRefresh] = useState(false);
     const onRefresh = async () => {
         setRefresh(true);
@@ -26,6 +25,7 @@ const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn }
                     tintColor={"black"}
                 />
             }
+            horizontal={horizontal}
         >
             {loading? <ActivityIndicator color="black" size="small" />:children}
         </ScrollView>

@@ -35,7 +35,6 @@ const DescriptionContainer = styled.View`
     width: 100%;
     justify-content: center;
     border-radius: 5px;
-    box-shadow: 0px 0px 3px gray;
     margin: 0px 0px 5px 0px;
 `;
 const PublicContainer = styled.View`
@@ -230,8 +229,8 @@ const AddDiary =  (props: any) => {
                                     height: "100%",
                                     flexShrink: 1,
                                     fontSize: 13,
-                                    borderWidth: 0.5,
-                                    borderBottomWidth: 0.3,
+                                    
+                                    borderBottomWidth: 0,
                                     paddingHorizontal: 5,
                                     borderRadius: 5,
                                     backgroundColor: "rgba(255,255,255, 1)"
