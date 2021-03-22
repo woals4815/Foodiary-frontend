@@ -1,5 +1,5 @@
 import { ApolloProvider, useReactiveVar } from '@apollo/client';
-import {Image} from "react-native";
+import {Image, StatusBar} from "react-native";
 import React, { useState } from 'react';
 import * as Font from "expo-font";
 import styled from 'styled-components/native';
@@ -50,6 +50,7 @@ export default function App() {
         <NavigationContainer>
           <Stack />
         </NavigationContainer>
+        <StatusBar barStyle="dark-content" />
       </ApolloProvider>
     </>
   ): (

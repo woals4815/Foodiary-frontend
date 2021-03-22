@@ -5,6 +5,7 @@ import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, Touchabl
 import styled from "styled-components/native";
 import JoinButton from "../../components/Button";
 import DiaryCard from "../../components/DiaryCard";
+import List from "../../components/List";
 import ScrollContainer from "../../components/ScrollContainer";
 import { deleteDiary, deleteDiaryVariables } from "../../__generated__/deleteDiary";
 import { getMyDiaries } from "../../__generated__/getMyDiaries";
@@ -48,31 +49,38 @@ const ListButton = styled.View`
     width: ${WIDTH/10}px;
     position: absolute;
     z-index: 10;
-    top: 5;
-    right: 5;
+    top: 5px;
+    right: 5px;
     border-radius: 20px;
     background-color: skyblue;
     box-shadow: 0px 0px 3px gray;
-    border: 2.5px;
-    borderColor: #F9F3F3;
 `;
 
 const MyDiary =  (props: any) => {
     const { navigation, route } = props;
     const [isList, setIsList] = useState(false);
     let { data, loading, error, refetch} = useQuery<getMyDiaries>(GET_MY_DIARIES_QUERY);
+    const listPress = () => {
+        if (isList){
+            setIsList(false);
+        } else{
+            setIsList(true);
+        }
+    }
     useEffect(() => {
         refetch();
     }, [data]);
+    console.log(data?.getMyDiaries.myDiaries);
     return (
         <ScrollContainer
             loading={loading}
             refreshFn={refetch}
             contentContainerStyle={{
-                paddingBottom: 10
+                paddingBottom: 10,
+                paddingHorizontal: isList? 10 : 0
             }}
         >
-            <TouchableOpacity style={{zIndex: 10}}>
+            <TouchableOpacity style={{zIndex: 10}} onPress={listPress}>
                 <ListButton>
                     <Text style={{fontSize: 13}}>{isList ? "Full" : "List"}</Text>
                 </ListButton>
@@ -81,7 +89,7 @@ const MyDiary =  (props: any) => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                {data?.getMyDiaries.myDiaries?.slice(0).reverse().map(diary => (
+                {!isList ? data?.getMyDiaries.myDiaries?.slice(0).sort(function(a,b){return a.id-b.id}).reverse().map(diary => (
                     <DiaryCard 
                         images={diary.images}
                         description={diary.description}
@@ -91,6 +99,10 @@ const MyDiary =  (props: any) => {
                         key={diary.id}
                         diaryId={diary.id}
                         refreshFn={refetch}
+                    />
+                )): data?.getMyDiaries.myDiaries?.slice(0).sort(function(a,b){return a.id-b.id}).reverse().map(diary => (
+                    <List 
+                      key={diary.id}
                     />
                 ))}
             </KeyboardAvoidingView> 

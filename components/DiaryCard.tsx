@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Dimensions, ScrollView } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { formatDate } from "../utils";
@@ -67,15 +67,16 @@ const Text = styled.Text``;
 
 const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn}: any) => {
     const [isEdit, setIsEdit] = useState(false);
+    const [keyword, setKeyword] = useState<any>();
     const {getValues, setValue, errors, handleSubmit, register} = useForm();
     const onCompleted = (data: deleteDiary) => {
         const { deleteDiary: {
             ok, error
         }} = data;
         if (ok) {
-            Alert.alert("Deleted the Diary", '', [
+            Alert.alert("삭제 완료", '', [
                 {
-                    text: "Ok",
+                    text: "확인",
                     onPress: () => {
                         refreshFn();
                     }
@@ -113,19 +114,19 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                 variables: {
                     editDiaryInput: {
                         diaryId,
-                        description
+                        description: description ?? keyword
                     }
                 }
-            })
+            });
         }catch(e) {
             console.log(e);
             Alert.alert("수정에 실패 했습니다.");
         }
     }
     const onPress = () => {
-        Alert.alert("Delete Diary", "Are you sure?",[
+        Alert.alert("삭제 하시겠습니까?", "",[
             {
-                text: "Delete",
+                text: "확인",
                 onPress: async() => {
                     try {
                         await deleteDiary({
@@ -139,7 +140,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                 }
             },
             {
-                text: "No",
+                text: "취소",
                 onPress: () => null,
             }
         ])
@@ -147,6 +148,16 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
     useEffect(() => {
         register("description");
     }, [register]);
+    if (loading){
+        return (
+            <ActivityIndicator size="large" color="black" />
+        )
+    }
+    if (editLoading) {
+        return (
+            <ActivityIndicator size="large" color="black" />
+        )
+    }
     return (
            <CardContainer>
                 <DateContainer>
@@ -165,7 +176,11 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                           inputStyle={{
                               height: "100%",
                               fontSize: 14
-                          }} 
+                          }}
+                          onChange={(text: any) => {
+                              setValue("description", text);
+                              setKeyword(text);
+                            }} 
                         />
                     }
                     </ScrollContainer>
@@ -173,8 +188,8 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                 <ImageContainer>
                     <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5}} showsHorizontalScrollIndicator={false}>
                         <>
-                            {images.map((image:any) => (
-                                <ImagePresenter imageUri={image} imageStyle={{width: WIDTH / 3, height: WIDTH / 3, marginRight: 10, borderRadius: 10}} />
+                            {images.map((image:any, index: any) => (
+                                <ImagePresenter imageUri={image} imageStyle={{width: WIDTH / 3, height: WIDTH / 3, marginRight: 10, borderRadius: 10}} ket={index} />
                             ))}
                             {isEdit? 
                             <AddPhotoContainer>
@@ -209,7 +224,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                           bottom: 0,
                           right: "40%"
                       }}
-                      onPress={editOnSubmit}
+                      onPress={handleSubmit(editOnSubmit)}
                     /> 
                     : <></> 
                 }

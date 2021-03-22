@@ -310,12 +310,14 @@ const Profile = ({navigation, route: { params } }: any) => {
                             }}
                         >My Diary: </MyDiaryText>
                         <MyDiaryText>{myData?.getMyDiaries.myDiaries?.length} diaries</MyDiaryText>
-                        <JoinButton 
+                    </MyDiaryContainer>
+                    <JoinButton 
                             title={"My Diary"}
                             onPress={() => navigation.navigate("My Diary", { myData })}
                             buttonStyle={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 10,
+                                alignItems: "center",
+                                width: "25%",
+                                paddingVertical: 5,
                                 backgroundColor: "#FED048",
                                 borderRadius: "8px",
                                 shadowColor: "gray",
@@ -326,7 +328,6 @@ const Profile = ({navigation, route: { params } }: any) => {
                                 shadowOpacity: 0.7,
                             }}
                         />
-                    </MyDiaryContainer>
                     {isEdit? 
                     <SubmitContaier>
                         <JoinButton 
