@@ -11,9 +11,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import Stack from './navigation/Stack';
 import { registerRootComponent } from 'expo';
 
-
-
-
 const Text = styled.Text`
   color: black;
   margin-left: 100px;

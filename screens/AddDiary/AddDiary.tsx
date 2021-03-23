@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {  ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView, Platform, Switch, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView, Platform, Switch, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import Input from "../../components/Input";
 import { createDiaryMutation, createDiaryMutationVariables } from "../../__generated__/createDiaryMutation";
@@ -12,7 +12,7 @@ import axios from "axios";
 import Slider from '@react-native-community/slider';
 import ScrollContainer from "../../components/ScrollContainer";
 import Swiper from "react-native-swiper";
-import SearchInput from "../../components/SearchInput";
+
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -98,7 +98,6 @@ const CREATE_DIARY_MUTATION = gql`
 const AddDiary =  (props: any) => {
     // state 항목 관리
     const [images, setImages] = useState<any>([]);
-    const [uploadImages, setUploadImages] = useState<any>([]);
     const [isEnabled, setIsEnabled] = useState(false);
     const [rangeValue, setRangeValue] = useState(5.0);
     const [loading, setLoading] = useState(false);
@@ -152,36 +151,46 @@ const AddDiary =  (props: any) => {
     });
     const onSubmit = async() => {
         setLoading(true);
-        const bodyFormData = new FormData();
-        images.forEach((image: any) => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
-        const {data} = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
-            method: 'post',
-            data: bodyFormData,
-            headers: {
-                'content-type': 'multipart/form-data',
-            },
-        });
-        setUploadImages([]);
-        setUploadImages(data);
-        const {description, rating} = getValues();
-        if (!loading) {
-            try {
-                await createDiaryMutation({
-                    variables: {
-                        createDiaryMutationInput: {
-                            description: thisDescription,
-                            publicOrNot: isEnabled,
-                            images: data,
-                            rating
-                        }
-                    }
+        let axiosData;
+        if (images.length < 11) {const bodyFormData = new FormData();
+            images.forEach((image: any) => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
+            const {data} = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
+                method: 'post',
+                data: bodyFormData,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                },
                 });
-            }catch(error){ 
-                console.log(error);
+            axiosData = data;
+            const { rating } = getValues();
+            if (!loading) {
+                try {
+                    await createDiaryMutation({
+                        variables: {
+                            createDiaryMutationInput: {
+                                description: thisDescription,
+                                publicOrNot: isEnabled,
+                                images: axiosData,
+                                rating
+                            }
+                        }
+                    });
+                }catch(error){ 
+                    console.log(error);
+                }
             }
+        }else {
+            setLoading(false);
+            setValue("description", "");
+            deleteAllImage();
+            Alert.alert("사진은 최대 10개까지 업로드 가능합니다.", '', [
+                {
+                    text: "확인",
+                    onPress: () => null
+                }
+            ]);
         }
-        
-    }
+    };
     useEffect(() => {
         (async () => {
           if (Platform.OS !== 'web') {

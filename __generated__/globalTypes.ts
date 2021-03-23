@@ -15,6 +15,11 @@ export interface CreateAccountInput {
   profilePic?: string | null;
 }
 
+export interface CreateCommentInput {
+  comment: string;
+  diaryId: number;
+}
+
 export interface CreateDiaryInput {
   description?: string | null;
   images?: string[] | null;

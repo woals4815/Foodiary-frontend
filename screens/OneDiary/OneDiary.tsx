@@ -1,3 +1,4 @@
+import gql from "graphql-tag";
 import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import Swiper from "react-native-swiper";
@@ -6,6 +7,15 @@ import JoinButton from "../../components/Button";
 import ImagePresenter from "../../components/ImagePresenter";
 import ScrollContainer from "../../components/ScrollContainer";
 
+export const CREATE_COMMENT_MUTATION = gql`
+    mutation createComment($createCommentInput: CreateCommentInput!){
+        createComment(input: $createCommentInput) {
+            ok
+            error
+            commentId
+        }
+    }
+`;
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -17,6 +27,10 @@ const ImageContainer = styled.View`
     width: 100%;
     background-color: rgba(0,0,0,0.1);
     margin-bottom: 10px;
+`;
+
+const CommentContainer = styled.View`
+
 `;
 const Text = styled.Text``;
 

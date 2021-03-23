@@ -11,18 +11,18 @@ const Container = styled.View`
     height: 100%;
     width: 100%;
     paddingHorizontal: 20px;
-    background-color: #FED048;
+    background-color: white;
     paddingVertical: 20px;
     justify-content: space-between;
     border-radius: 15px;
-    box-shadow: 0px 0px 3px #FED048;
+    box-shadow: 0px 0px 8px gray;
 `;
 const ImageContainer = styled.View`
     width: 100%;
     height: 100%;
     flex: 1;
     background-color: rgba(0,0,0,0.8);
-    box-shadow: 0px -1px 3px gray;
+    box-shadow: 0px 0px 10px gray;
 `;
 const ContentContainer = styled.View`
     width: 100%;
@@ -30,7 +30,7 @@ const ContentContainer = styled.View`
     flex: 1;
     flex-direction: row;
     justify-content: space-between;
-    box-shadow: 0px 0px 3px gray;
+    
     z-index: -1;
 `;
 
@@ -96,35 +96,36 @@ const HomeCard = ({diary}: any) => {
                   <ContentLabelContainer>
                       <Text
                         style={{
-                            fontWeight: "700",
-                            color: "#FED048"
+                            fontWeight: "500",
+                            color: "#FED048",
+                            fontSize: 10
                         }}
                       >Rating</Text>
                   </ContentLabelContainer>
                   <ContentLabelContainer>
                       <Text
                         style={{
-                            fontWeight: "700",
+                            fontWeight: "500",
                             color: "#FED048",
-                            fontSize: 12
+                            fontSize: 10
                         }}
                       >Description</Text>
                   </ContentLabelContainer>
                   <ContentLabelContainer>
                       <Text
                       style={{
-                        fontWeight: "700",
+                        fontWeight: "500",
                         color: "#FED048",
-                        fontSize: 12
+                        fontSize: 10
                     }}
                     >Comments</Text>
                   </ContentLabelContainer>
                   <ContentLabelContainer>
                       <Text
                         style={{
-                            fontWeight: "700",
+                            fontWeight: "500",
                             color: "#FED048",
-                            fontSize: 12
+                            fontSize: 10
                         }}
                       >Creator</Text>
                   </ContentLabelContainer>
@@ -140,7 +141,7 @@ const HomeCard = ({diary}: any) => {
                   </ContentDataContentsContainer>
                   <ContentDataContentsContainer>
                       <Text>
-                          {trimText(diary.description, 100)}
+                          {trimText(diary.description, 40)}
                       </Text>
                   </ContentDataContentsContainer>
                   <ContentDataContentsContainer>

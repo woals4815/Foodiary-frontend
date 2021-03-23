@@ -10,7 +10,7 @@ import { createAccountMutation, createAccountMutationVariables } from "../__gene
 import { ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import ScrollContainer from "../components/ScrollContainer";
-import { Ionicons } from '@expo/vector-icons'; 
+
 
 export const CREATE_ACCOUNT_MUTATION = gql`
     mutation createAccountMutation($createAccountInput: CreateAccountInput!) {

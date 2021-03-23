@@ -50,6 +50,8 @@
     "react-native-reanimated": "^2.0.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "^2.18.1",
+    "react-native-skeleton-content": "^1.0.20",
+    "react-native-skeleton-placeholder": "^3.0.4",
     "react-native-swiper": "^1.6.0",
     "react-native-web": "~0.13.12",
     "styled-components": "^5.2.1"

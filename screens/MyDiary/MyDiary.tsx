@@ -1,13 +1,11 @@
 import { gql } from "@apollo/client";
-import { useMutation, useQuery } from "@apollo/client/react/hooks";
+import { useQuery } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import JoinButton from "../../components/Button";
 import DiaryCard from "../../components/DiaryCard";
 import List from "../../components/List";
 import ScrollContainer from "../../components/ScrollContainer";
-import { deleteDiary, deleteDiaryVariables } from "../../__generated__/deleteDiary";
 import { getMyDiaries } from "../../__generated__/getMyDiaries";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
@@ -40,6 +38,7 @@ export const GET_MY_DIARIES_QUERY = gql`
 
 const Text = styled.Text`
     font-size: 20px;
+    color: white;
 `;
 
 const ListButton = styled.View`
@@ -52,7 +51,7 @@ const ListButton = styled.View`
     top: 5px;
     right: 5px;
     border-radius: 20px;
-    background-color: skyblue;
+    background-color: #9FD7DF;
     box-shadow: 0px 0px 3px gray;
 `;
 
@@ -70,14 +69,13 @@ const MyDiary =  (props: any) => {
     useEffect(() => {
         refetch();
     }, [data]);
-    console.log(data?.getMyDiaries.myDiaries);
     return (
         <ScrollContainer
             loading={loading}
             refreshFn={refetch}
             contentContainerStyle={{
-                paddingBottom: 10,
-                paddingHorizontal: isList? 10 : 0
+                paddingVertical: 10,
+                paddingHorizontal: isList? 10 : 0,
             }}
         >
             <TouchableOpacity style={{zIndex: 10}} onPress={listPress}>
@@ -99,10 +97,14 @@ const MyDiary =  (props: any) => {
                         key={diary.id}
                         diaryId={diary.id}
                         refreshFn={refetch}
+                        props={props}
                     />
                 )): data?.getMyDiaries.myDiaries?.slice(0).sort(function(a,b){return a.id-b.id}).reverse().map(diary => (
                     <List 
                       key={diary.id}
+                      images={diary.images}
+                      createdAt={diary.createdAt}
+                      description={diary.description}
                     />
                 ))}
             </KeyboardAvoidingView> 

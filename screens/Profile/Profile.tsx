@@ -16,6 +16,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { getMyDiaries } from "../../__generated__/getMyDiaries";
 import axios from "axios";
 import DeleteButton from "../../components/DeleteButton";
+import Loading from "../../components/Loading";
 
 export const GET_ME_QUERY = gql`
     query getMe{
@@ -213,8 +214,7 @@ const Profile = ({navigation, route: { params } }: any) => {
             setExistSelectImage(params?.selectImages[0]); //잘 작동함
         }
     },[register, params?.selectImages]);
-    return(
-        <ScrollContainer
+    return !loading? <ScrollContainer
             loading={loading}
             refreshFn={refetch}
         >
@@ -356,7 +356,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                 </ContentContainer>
             </Container>
         </ScrollContainer>
-    )
+        : <Loading />
 };
 
 export default Profile;

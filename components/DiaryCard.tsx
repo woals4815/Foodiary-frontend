@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Dimensions, ScrollView } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { formatDate } from "../utils";
@@ -14,6 +14,8 @@ import ImagePresenter from "./ImagePresenter";
 import Input from "./Input";
 import ScrollContainer from "./ScrollContainer";
 import SubmitButton from "./SubmitButton";
+import * as MediaLibrary from 'expo-media-library';
+import axios from "axios";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -40,13 +42,14 @@ const CardContainer = styled.View`
     flex: 1;
 `;
 const ImageContainer = styled.View`
+    box-shadow: 0px 0px 5px gray;
 `;
 const DescriptionContainer = styled.View`
     height: ${HEIGHT/3}px;
     border-radius: 10px;
     margin: 10px 5px 10px 5px;
     background-color: white;
-    box-shadow: 0px 0px 2px gray;
+    box-shadow: 0px 0px 8px gray;
 `;
 
 const DateContainer = styled.View`
@@ -62,13 +65,17 @@ const AddPhotoContainer = styled.View`
     align-items: center;
 `;
 
+const NewImageContainer = styled.View``;
 
 const Text = styled.Text``;
 
-const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn}: any) => {
+const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn, props}: any) => {
+    const {navigation, route: {params}} = props;
     const [isEdit, setIsEdit] = useState(false);
+    const [isEditLoading, setIsEditLoading] = useState(false);
     const [keyword, setKeyword] = useState<any>();
-    const {getValues, setValue, errors, handleSubmit, register} = useForm();
+    const [AddImages, setAddImages] = useState([]);
+    const { getValues, setValue, errors, handleSubmit, register } = useForm();
     const onCompleted = (data: deleteDiary) => {
         const { deleteDiary: {
             ok, error
@@ -89,17 +96,22 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
             ok, error
         }} = data;
         if (ok) {
+            setIsEditLoading(false);
             setIsEdit(false);
             Alert.alert("수정 완료");
-            await refreshFn();
+            refreshFn();
         };
+        setAddImages([]);
     };
     const editOnPress = () => {
         if (isEdit){
+            params?.selectImages?.splice(0, params?.selectImages?.length);
+            delete params?.diaryId;
             setIsEdit(false);
         }else {
             setIsEdit(true);
-        }
+        };
+
     }
     const [deleteDiary, {data, error, loading}] = useMutation<deleteDiary, deleteDiaryVariables>(DELETE_DIARY_MUTATION, {
         onCompleted
@@ -109,12 +121,39 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
     });
     const editOnSubmit = async() => {
         const { description } = getValues();
-        try{    
+        try{
+            const bodyFormData = new FormData();
+            let axiosData;
+           if (AddImages && AddImages?.length > 0){ AddImages?.forEach((image: any) => bodyFormData.append('file', { uri: image.uri, name: image.filename, type: 'image/jpeg'}));
+                if (AddImages.length + images?.length > 10){
+                    params?.selectImages?.splice(0, params?.selectImages?.length);
+                    delete params?.diaryId;
+                    setAddImages([]);
+                    setIsEdit(false);
+                    Alert.alert("사진은 최대 10개까지 업로드 가능합니다.", '', [
+                        {
+                            text: "확인",
+                            onPress: () => null
+                        }
+                    ]);
+                }else {
+                    setIsEditLoading(true);
+                    const { data } = await axios("https://food-vicion-backend.herokuapp.com/uploads", {
+                        method: 'post',
+                        data: bodyFormData,
+                        headers: {
+                            'content-type': 'multipart/form-data',
+                            },
+                        });
+                    axiosData=data;
+                };
+            };
             await editDiary({
                 variables: {
                     editDiaryInput: {
                         diaryId,
-                        description: description ?? keyword
+                        description: description ?? keyword,
+                        images: axiosData ?? [],
                     }
                 }
             });
@@ -145,19 +184,18 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
             }
         ])
     };
+    const getAssetsPress = async() => {
+        const result= await MediaLibrary.getAssetsAsync({first: 300});
+        const paramsName = "DiaryCard";
+        const {assets: images} = result;
+        navigation.navigate("CameraRoll", {images, paramsName, diaryId});
+    }
     useEffect(() => {
         register("description");
-    }, [register]);
-    if (loading){
-        return (
-            <ActivityIndicator size="large" color="black" />
-        )
-    }
-    if (editLoading) {
-        return (
-            <ActivityIndicator size="large" color="black" />
-        )
-    }
+        if (params?.selectImages) {
+            setAddImages(params?.selectImages);
+        }
+    }, [register, params?.selectImages]);
     return (
            <CardContainer>
                 <DateContainer>
@@ -175,7 +213,8 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                           multiline={true}
                           inputStyle={{
                               height: "100%",
-                              fontSize: 14
+                              fontSize: 14,
+                              paddingBottom: 2
                           }}
                           onChange={(text: any) => {
                               setValue("description", text);
@@ -186,19 +225,44 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                     </ScrollContainer>
                 </DescriptionContainer>
                 <ImageContainer>
-                    <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5}} showsHorizontalScrollIndicator={false}>
+                    <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 7}} showsHorizontalScrollIndicator={false}>
                         <>
                             {images.map((image:any, index: any) => (
-                                <ImagePresenter imageUri={image} imageStyle={{width: WIDTH / 3, height: WIDTH / 3, marginRight: 10, borderRadius: 10}} ket={index} />
-                            ))}
-                            {isEdit? 
-                            <AddPhotoContainer>
-                                <Ionicons
-                                    name={"add"}
-                                    color={"gray"}
-                                    size={50}
+                                <ImagePresenter 
+                                  imageUri={image} 
+                                  imageStyle={{width: WIDTH / 3, 
+                                  height: WIDTH / 3, 
+                                  marginRight: 15, 
+                                  borderRadius: 10,
+                                }} key={index} 
                                 />
-                            </AddPhotoContainer>: 
+                            ))}
+                            {AddImages?.length > 0 && params?.diaryId === diaryId ? AddImages?.map((image: any, index: any) =>
+                                <NewImageContainer key={index}> 
+                                     <DeleteButton 
+                                        title={"⏤"}
+                                        buttonStyle={{
+                                            zIndex: 12,
+                                            position: "absolute",
+                                            left: -10,
+                                            top: -5
+                                        }}
+                                        key={image.id}
+                                        onPress={() => setAddImages(AddImages.filter((item) => item.id !== image.id))}
+                                     />
+                                    <ImagePresenter imageUri={image.uri} imageStyle={{width: WIDTH / 3, height: WIDTH / 3, marginRight: 15, borderRadius: 10}} key={index} />
+                                </NewImageContainer>
+                            ) :<></>}
+                            {isEdit?
+                            <TouchableOpacity onPress={getAssetsPress}>
+                                <AddPhotoContainer>
+                                    <Ionicons
+                                        name={"add"}
+                                        color={"gray"}
+                                        size={50}
+                                    />
+                                </AddPhotoContainer>
+                            </TouchableOpacity> : 
                             <></>}
                         </>
                     </ScrollView>
@@ -214,7 +278,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                     }}
                     onPress={editOnPress}
                 />
-                {isEdit? 
+                {isEdit && !editLoading? 
                     <SubmitButton 
                       title={"Submit"} 
                       buttonStyle={{
@@ -226,8 +290,9 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                       }}
                       onPress={handleSubmit(editOnSubmit)}
                     /> 
-                    : <></> 
+                    : <></>
                 }
+                {editLoading || isEditLoading || loading && (<ActivityIndicator color="black" size="small" style={{position: "absolute", right: "48%", bottom: "1%" }}/>) }
                 <DeleteButton
                     buttonStyle={{
                         width: "20%",
@@ -237,6 +302,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                         right: 0,
                     }}
                     onPress={onPress} 
+                    title={"Delete"}
                 />
            </CardContainer>
     )

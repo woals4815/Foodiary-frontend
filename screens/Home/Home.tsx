@@ -1,28 +1,33 @@
 import { gql } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { getAllDiaries } from "../../__generated__/getAllDiaries";
-import {useLazyQuery, useQuery} from "@apollo/client/react/hooks"
+import { useLazyQuery } from "@apollo/client/react/hooks"
 import { ActivityIndicator, Dimensions, PanResponder, Animated } from "react-native";
 import styled from "styled-components/native";
-import ScrollContainer from "../../components/ScrollContainer";
-import ImagePresenter from "../../components/ImagePresenter";
 import HomeCard from "./HomeCard";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import SearchInput from "../../components/SearchInput";
+import Loading from "../../components/Loading";
+
+
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #F9F3F3;
-    width: ${WIDTH}px;
-    height: ${HEIGHT}px;
-`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #F9F3F3;
+  width: ${WIDTH}px;
+  height: ${HEIGHT}px;
+`;
 const Text= styled.Text`
-    font-size: 15px;
-`
+  font-size: 15px;
+`;
+
+const DetailButtonContainer = styled.View`
+
+`;
+
 export const GET_ALL_DIARIES = gql`
     query getAllDiaries{
         getAllDiaries{
@@ -123,7 +128,7 @@ export default (props: any) => {
     position.setValue({ x: 0, y: 0 });
     getAllDiaries();
   }, [topIndex, route]);
-  return (
+  return !loading ? 
           <Container>
             {!loading ? data?.getAllDiaries.diaries?.map((diary, index) => {
               if (topIndex === index + 1 && topIndex === data.getAllDiaries.diaries?.length) {
@@ -208,5 +213,5 @@ export default (props: any) => {
             : <ActivityIndicator color="white" size="large" />
             }
           </Container>
-  );
+          : <Loading />
 }

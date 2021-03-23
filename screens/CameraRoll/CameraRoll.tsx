@@ -42,7 +42,7 @@ const SelectImageContainer = styled.View`
 const CameraRoll = ({navigation, route}: any) => {
     const [selectImages, setSelectImages] = useState<any>([]);
     const { 
-        params: { images, paramsName }
+        params: { images, paramsName, diaryId }
     } = route;
     useLayoutEffect(() => {
         const title = "Camera Roll";
@@ -65,12 +65,18 @@ const CameraRoll = ({navigation, route}: any) => {
       }
     };
     const canceledWholeImage = () => {
-        setSelectImages([]);
+        if (selectImages.length > 0){
+            setSelectImages([]);
+        }else {
+            navigation.goBack();
+        }
     }
     const passSelectedImages = () => {
         if (paramsName === "Profile") {
             navigation.navigate("Profile", {selectImages});
-        }else{
+        }else if (paramsName === "DiaryCard"){
+            navigation.navigate("My Diary", {selectImages, diaryId});
+        }else {
             navigation.navigate("Add Diary" , {selectImages});
         }
     }

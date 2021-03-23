@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Transition } from "react-native-reanimated";
+import React, { useState } from "react";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 
 const TextInput = styled.TextInput`
