@@ -14,3 +14,11 @@ export const trimText = (text = "", limit: number) => {
   }
   return text.length > limit ? `${text.slice(0, limit)}...` : text;
 }
+
+export const trimTextEol = (text = "") => {
+    if (!text){
+        return;
+    }
+    const textStrip = text.split("\n")[0];
+    return `${textStrip}\n`+ "...";    
+}

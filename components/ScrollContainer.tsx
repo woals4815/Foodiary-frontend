@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
 
 
-const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn,horizontal }: any) => {
+const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn,horizontal, showsVerticalScrollIndicator }: any) => {
     const [refresh, setRefresh] = useState(false);
     const onRefresh = async () => {
         setRefresh(true);
@@ -13,7 +13,7 @@ const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn,h
       };
     return (
         <ScrollView
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator={showsVerticalScrollIndicator}
             contentContainerStyle={{
                 ...contentContainerStyle
             }}

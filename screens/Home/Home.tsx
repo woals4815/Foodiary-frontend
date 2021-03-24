@@ -24,10 +24,6 @@ const Text= styled.Text`
   font-size: 15px;
 `;
 
-const DetailButtonContainer = styled.View`
-
-`;
-
 export const GET_ALL_DIARIES = gql`
     query getAllDiaries{
         getAllDiaries{
@@ -60,12 +56,6 @@ export const GET_ALL_DIARIES = gql`
     }
 `;
 
-const styles = {
-  top: 50,
-  height: HEIGHT / 1.5,
-  width: "90%",
-  position: "absolute",
-};
 export default (props: any) => {
   const {navigation, route} = props;
   const [topIndex, setTopIndex] = useState(0);

@@ -139,7 +139,6 @@ const Profile = ({navigation, route: { params } }: any) => {
     const [profilePic, setProfilePic] = useState(myData?.getMe.profilePic); //이건 캐시 업데이트
     const [existSelectImage, setExistSelectImage] = useState(params?.selectImages[0]); //이건 카메라롤 갔다 온 파람 저장용, useEffect로 계속 업데이트 시킴.
     const paramsName = "Profile";
-    const client = useApolloClient();
     const onPressEdit = () => {
         if (isEdit){
             params?.selectImages?.splice(0, params?.selectImages?.length);

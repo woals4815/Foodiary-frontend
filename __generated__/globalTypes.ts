@@ -27,8 +27,17 @@ export interface CreateDiaryInput {
   rating?: number | null;
 }
 
+export interface DeleteCommentInput {
+  commentId: number;
+}
+
 export interface DeleteDiaryInput {
   diaryId: number;
+}
+
+export interface EditCommentInput {
+  comment: string;
+  commentId: number;
 }
 
 export interface EditDiaryInput {
@@ -45,6 +54,10 @@ export interface EditProfileInput {
   name?: string | null;
   password?: string | null;
   profilePic?: string | null;
+}
+
+export interface GetAllCommentsInput {
+  diaryId: number;
 }
 
 export interface LoginIntput {

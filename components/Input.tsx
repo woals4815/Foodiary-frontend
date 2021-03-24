@@ -13,7 +13,7 @@ const View = styled.View`
     width: 100%;
 `; 
 
-const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue, register}: any) => {
+const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue, register, value}: any) => {
    const [isFocused, setIsFocused] = useState(false);
    return( 
         <TouchableWithoutFeedback
@@ -33,6 +33,7 @@ const Input = ({placeholder, onChange, inputStyle, multiline, defaultValue, regi
                 }}
                 defaultValue={defaultValue}
                 ref={register}
+                value={value}
                 autoCompleteType={"off"}
                 />
             </View>

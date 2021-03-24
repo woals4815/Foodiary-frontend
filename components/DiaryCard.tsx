@@ -88,8 +88,8 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                         refreshFn();
                     }
                 }
-            ])
-        }
+            ]);
+        };
     };
     const editOnCompleted = async(data: editDiary) => {
         const {editDiary: {
