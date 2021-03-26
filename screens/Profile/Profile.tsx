@@ -1,9 +1,8 @@
-import { gql, useApolloClient } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useMutation, useQuery} from "@apollo/client/react/hooks";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Dimensions } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import JoinButton from "../../components/Button";
@@ -13,10 +12,9 @@ import ScrollContainer from "../../components/ScrollContainer";
 import { editProfile, editProfileVariables } from "../../__generated__/editProfile";
 import { getMe } from "../../__generated__/getMe";
 import * as MediaLibrary from 'expo-media-library';
-import { getMyDiaries } from "../../__generated__/getMyDiaries";
 import axios from "axios";
-import DeleteButton from "../../components/DeleteButton";
 import Loading from "../../components/Loading";
+import Password from "../../components/Password";
 
 export const GET_ME_QUERY = gql`
     query getMe{
@@ -54,7 +52,7 @@ const Container = styled.View`
     justify-content: space-around;
     align-items: center;
     paddingHorizontal: 20px;
-`
+`;
 const ProfileImageContainer = styled.View`
     height: ${WIDTH / 3}px;
     width: ${WIDTH / 3}px;
@@ -63,49 +61,39 @@ const ProfileImageContainer = styled.View`
     align-items: center;
     justify-content: center;
     background-color: black;
-`
+    marginBottom: 10px;
+`;
+const ButtonContainer = styled.View`
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+`;
 const ContentContainer = styled.View`
     height: ${HEIGHT/2.2}px;
     width: 100%;
     border-radius: 8px;
-    flex-direction: column;
+    flex-direction: row;
     background-color: white;
     box-shadow: 0px 0px 3px gray;
-`
-const EmailContainer = styled.View`
-    flex-direction: row;
-    width: 100%;
-    paddingHorizontal: 70px;
-    flex: 2;
-    justify-content: center;
+`;
+const LabelContainer = styled.View`
+    width: 27%;
+    flex-direction: column;
     align-items: center;
-`;
-const EmailText= styled.Text`
-    font-size: 20px;
-`;
-const NameContainer = styled.View`
-    flex-direction: row;
-    flex: 2;
-    justify-content: center;
-    paddingHorizontal: 70px;
-    align-items: center;
-    width: 100%;
-`;
-
-const NameText = styled.Text`
-    font-size: 20px;
-`;
-
-const MyDiaryContainer =styled.View`
-    flex-direction: row;
-    flex: 2;
-    paddingHorizontal: 40px;
     justify-content: space-around;
-    align-items: center;
 `;
-
-const MyDiaryText = styled.Text`
-    font-size: 20px;
+const LabelTitleContainer = styled.View`
+    background-color: #F3F4ED;
+    border-radius: 5px;
+    paddingHorizontal: 10px;
+    paddingVertical: 5px;
+    box-shadow: 0px 4px 4px gray;
+`;
+const DataContainer = styled.View`
+    width: 73%;
+    flex-direction: column;
+    justify-content: space-around;
+    paddingLeft: 10px;
 `;
 
 const SubmitContaier = styled.View`
@@ -123,21 +111,27 @@ const EditBarContaier = styled.View`
     align-items: center;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 10px
-`
+`;
 const EditBarText = styled.Text`
     font-size: 20px;
-`
+`;
+const Text= styled.Text`
+    font-size: 18px;
+`;
 
 interface IFormProps {
     email?: string;
     name?: string;
     profilePic?: string;
+    password?:string;
+    confirmPassword?: string;
 };
 const Profile = ({navigation, route: { params } }: any) => {
     const {data: myData, loading, error, refetch} = useQuery<getMe>(GET_ME_QUERY);
     const [isEdit, setIsEdit] =useState(false);//이건 필수
-    const [profilePic, setProfilePic] = useState(myData?.getMe.profilePic); //이건 캐시 업데이트
     const [existSelectImage, setExistSelectImage] = useState(params?.selectImages[0]); //이건 카메라롤 갔다 온 파람 저장용, useEffect로 계속 업데이트 시킴.
+    const [emailKeyword, setEmailKeyword] = useState(myData?.getMe.email);
+    const [nameKeyword, setNameKeyword] = useState(myData?.getMe.name);
     const paramsName = "Profile";
     const onPressEdit = () => {
         if (isEdit){
@@ -147,7 +141,7 @@ const Profile = ({navigation, route: { params } }: any) => {
         } else {
             setIsEdit(true);
         }
-    }
+    };
     const {register, handleSubmit,watch, errors, setValue, getValues} = useForm<IFormProps>({
         mode: "onChange"
     });
@@ -157,28 +151,38 @@ const Profile = ({navigation, route: { params } }: any) => {
                 ok, error
             }
         } = data;
-        const { email, name } = getValues();
         if (ok) {
-            console.log(email, name);
-            Alert.alert("Edit Success!");
+            Alert.alert("수정 완료", '', [
+                {
+                    text: "확인",
+                    onPress: () => {
+                        refetch();
+                    }
+                }
+            ]);
         };
+        if (error){
+            Alert.alert(`${error}`);
+        }
         if (params?.selectImages.length > 0) {
             params?.selectImages?.splice(0, params?.selectImages.length);
         }
         setExistSelectImage(null);
         setIsEdit(false);
+        refetch();
     };
     const [editProfile, {data, loading: editLoading, error: editError}] = useMutation<editProfile, editProfileVariables>(EDIT_PROFILE_MUTATION, {
         onCompleted,
     });
     const onPressPhotho = async() => {
-        const result= await MediaLibrary.getAssetsAsync({first: 300});
-        const {assets: images} = result;
+        const result= await MediaLibrary.getAssetsAsync({first: 500});
+        const {assets: images, hasNextPage} = result;
+        console.log(hasNextPage);
         navigation.navigate("CameraRoll", {images, paramsName});
-    }
+    };
     const onSubmit = async() => {
-        const { email, name } = getValues();
-        //console.log('onSubmit', existSelectImage); 선택한 이미지 useEffect로 넘어오는건 완전히 잘 작동
+        const { email, name, password, confirmPassword } = getValues();
+        let axiosData =[myData?.getMe.profilePic];
         if (existSelectImage) {
             const bodyFormData = new FormData();
             bodyFormData.append('file', { uri: existSelectImage.uri, name: existSelectImage.filename, type: 'image/jpeg'});
@@ -189,31 +193,38 @@ const Profile = ({navigation, route: { params } }: any) => {
                     'content-type': 'multipart/form-data',
                 },
             });//여기까지도 잘 작동
-            setProfilePic(data[0]); //여기도 잘 작동
-            await editProfile({
-                variables: {
-                    editProfileInput: {
-                        profilePic: profilePic, email, name
-                    }
-                }
-            });
-        }
+            axiosData=data;
+        };
         await editProfile({
             variables: {
                 editProfileInput: {
-                    email, name
+                    email: emailKeyword ?? email,
+                    name: nameKeyword ?? name,
+                    profilePic: axiosData[0],
+                    password,
+                    confirmPassword
                 }
             }
         });
-    }
+    };
     useEffect(() => {
         register("email", { pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/});
         register("name");
+        register("password");
+        register("confirmPassword");
         if (params?.selectImages){
             setExistSelectImage(params?.selectImages[0]); //잘 작동함
-        }
-    },[register, params?.selectImages]);
-    return !loading? <ScrollContainer
+        };
+        refetch();
+    },[register, params?.selectImages, myData?.getMe]);
+    return !loading?
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{
+                flex: 1
+            }}
+        >
+            <ScrollContainer
             loading={loading}
             refreshFn={refetch}
         >
@@ -241,93 +252,127 @@ const Profile = ({navigation, route: { params } }: any) => {
                     />
                   </ProfileImageContainer>
                 }
-                <JoinButton 
-                        title={`${isEdit? "Cancel" : "Edit Profile"}`}
-                        onPress={onPressEdit}
+                <ButtonContainer>
+                    <JoinButton 
+                            title={`${isEdit? "Cancel" : "Edit Profile"}`}
+                            onPress={onPressEdit}
+                            buttonStyle={{
+                                paddingVertical: 10,
+                                paddingHorizontal: 10,
+                                backgroundColor: "white",
+                                borderRadius: "4px",
+                                shadowColor: "gray",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1
+                                    },
+                                shadowOpacity: 0.4,
+                                marginBottom: "5%"
+                            }}
+                            textStyle={{
+                                fontWeight: "500"
+                            }}
+                    />
+                    <JoinButton 
+                        title={"My Diary"}
+                        onPress={() => navigation.navigate("My Diary")}
                         buttonStyle={{
                             paddingVertical: 10,
                             paddingHorizontal: 10,
-                            backgroundColor: "#FED048",
-                            borderRadius: "8px",
+                            backgroundColor: "white",
+                            borderRadius: "4px",
                             shadowColor: "gray",
                                 shadowOffset: {
                                     width: 0,
                                     height: 1
                                 },
-                            shadowOpacity: 0.7,
+                            shadowOpacity: 0.4,
                             marginBottom: "5%"
                         }}
                         textStyle={{
                             fontWeight: "500"
                         }}
                     />
+                </ButtonContainer>
                 <ContentContainer>
-                    <EmailContainer>
-                        <EmailText
-                            style={{
-                                fontWeight: '800'
-                            }}
-                        >Email: </EmailText>
-                        {isEdit? 
+                    <LabelContainer>
+                        <LabelTitleContainer>
+                            <Text>Email</Text>
+                        </LabelTitleContainer>
+                        <LabelTitleContainer>
+                            <Text>Name</Text>
+                        </LabelTitleContainer>
+                        {isEdit?
+                        <> 
+                            <LabelTitleContainer>
+                                <Text style={{fontSize: 10}}>New{"\n"}Password</Text>
+                            </LabelTitleContainer>
+                            <LabelTitleContainer>
+                                <Text style={{fontSize: 10}}>Confirm Password</Text>
+                            </LabelTitleContainer>
+                        </>
+                        : <></>}
+                        <LabelTitleContainer>
+                            <Text>Diary</Text>
+                        </LabelTitleContainer>
+                    </LabelContainer>
+                    <DataContainer>
+                        {isEdit?  
                             <Input 
-                                placeholder={"Email"}
-                                onChange={(text: string) => {
-                                    setValue('email', text);
-                                }}
-                                inputStyle={{
-                                    fontSize: 20,
-                                    paddingLeft: 5
-                                }}
                                 defaultValue={myData?.getMe.email}
-                            />
-                        : <EmailText>{myData?.getMe.email}</EmailText>}
-                    </EmailContainer>
-                    <NameContainer>
-                        <NameText
-                            style={{
-                                fontWeight: '800'
-                            }}
-                        >Name: </NameText>
-                            {isEdit? 
-                            <Input 
-                                placeholder={"Name"}
                                 onChange={(text: string) => {
-                                    setValue('name', text);
+                                    setValue("email", text);
+                                    setEmailKeyword(text);
                                 }}
                                 inputStyle={{
-                                    fontSize: 20,
-                                    paddingLeft: 5
+                                    fontSize: 14,
+                                    width: "95%",
+                                    paddingBottom: 5
                                 }}
-                                defaultValue={myData?.getMe.name}
                             />
-                        : <NameText>{myData?.getMe.name}</NameText>}
-                    </NameContainer>
-                    <MyDiaryContainer>
-                        <MyDiaryText
-                            style={{
-                                fontWeight: '800'
-                            }}
-                        >My Diary: </MyDiaryText>
-                        <MyDiaryText>{myData?.getMyDiaries.myDiaries?.length} diaries</MyDiaryText>
-                    </MyDiaryContainer>
-                    <JoinButton 
-                            title={"My Diary"}
-                            onPress={() => navigation.navigate("My Diary", { myData })}
-                            buttonStyle={{
-                                alignItems: "center",
-                                width: "25%",
-                                paddingVertical: 5,
-                                backgroundColor: "#FED048",
-                                borderRadius: "8px",
-                                shadowColor: "gray",
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 1
-                                    },
-                                shadowOpacity: 0.7,
-                            }}
-                        />
-                    {isEdit? 
+                        : <Text style={{fontSize: 14}}>{myData?.getMe.email}</Text>}
+                        {isEdit?  
+                            <Input 
+                                defaultValue={myData?.getMe.name}
+                                onChange={(text: string) => {
+                                    setValue("name", text);
+                                    setNameKeyword(text);
+                                }}
+                                inputStyle={{
+                                    fontSize: 14,
+                                    width: "95%",
+                                    paddingBottom: 5
+                                }}
+                            />
+                        : <Text style={{fontSize: 14}}>{myData?.getMe.name}</Text>}
+                        {isEdit?  
+                            <Password 
+                                onChange={(text: string) => {
+                                    setValue("password", text);
+                                }}
+                                inputStyle={{
+                                    fontSize: 14,
+                                    width: "95%",
+                                    paddingBottom: 5
+                                }}
+                            />
+                        : <></>}
+                        {isEdit?  
+                            <Password 
+                                onChange={(text: string) => {
+                                    setValue("confirmPassword", text);
+                                }}
+                                inputStyle={{
+                                    fontSize: 14,
+                                    width: "95%",
+                                    paddingBottom: 5
+                                }}
+                            />
+                        : <></>}
+                        <Text style={{fontSize: 14}}>{myData?.getMyDiaries.myDiaries ? `${myData.getMyDiaries.myDiaries.length} Cards` : "0 Card"}</Text>
+                    </DataContainer>
+                </ContentContainer>
+                {isEdit && !editLoading ? 
                     <SubmitContaier>
                         <JoinButton 
                             title={"Submit"}
@@ -352,10 +397,14 @@ const Profile = ({navigation, route: { params } }: any) => {
                     </SubmitContaier>
                     : <></>
                     }
-                </ContentContainer>
+                    {editLoading && (
+                        <ActivityIndicator size="small" color="black" />
+                    )}
             </Container>
-        </ScrollContainer>
+            </ScrollContainer>
+        </KeyboardAvoidingView> 
         : <Loading />
+    
 };
 
 export default Profile;

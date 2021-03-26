@@ -11,6 +11,7 @@ import DeleteButton from "../../components/DeleteButton";
 import ImagePresenter from "../../components/ImagePresenter";
 import Input from "../../components/Input";
 import Loading from "../../components/Loading";
+import MoreButton from "../../components/MoreButton";
 import ScrollContainer from "../../components/ScrollContainer";
 import { trimTextEol } from "../../utils";
 import { createComment, createCommentVariables } from "../../__generated__/createComment";
@@ -66,7 +67,6 @@ export const DELETE_COMMENT_MUTATION = gql`
 `;
 
 const ProfileImage= styled.Image``;
-
 const Container = styled.View`
     justify-content: center;
 `;
@@ -84,8 +84,6 @@ const ContentContainer = styled.View`
 const DescriptionContainer = styled.View`
     height: ${HEIGHT/3}px;
 `;
-
-
 const CommentContainer = styled.View`
     paddingVertical: 5px;
 `;
@@ -98,7 +96,6 @@ const ProfileContainer = styled.View`
     justify-content: center;
     borderColor: rgba(0,0,0,0.3);
 `;
-
 const CommentInputContainer = styled.View`
     flex-direction: row;
     height: ${HEIGHT /10}px;
@@ -118,14 +115,12 @@ const CommentContentContainer = styled.View`
 const CommentUserContentContainer = styled.View`
     flex-direction: column;
     width: ${WIDTH * (8/10)}px;
-    height: 100%;
     justify-content: center;
     paddingHorizontal: 5px;
     position: relative;
+    height: 100%;
 `;
-
 const Text = styled.Text``;
-
 const SubmitContainer = styled.View`
     width: ${WIDTH /9}px;
     height: ${WIDTH /9}px;
@@ -136,13 +131,24 @@ const SubmitContainer = styled.View`
 `;
 const ButtonContainer = styled.View`
 `;
+const moreTextContainer = styled.View`
+`;
 const OneDiary = ({navigation, route}: any) => {
     const  { params: { diary } } = route;
     const [isAbstract, setIsAbsctract] = useState(true);
     const [loading, setLoading] = useState(false);
     const [keyword, setKeyword] = useState("");
-    const client = useApolloClient();
+    const [commentClickedMore, setCommentClickedMore] = useState<any>([]);
     const {data, loading: myLoading} = useQuery<getMe>(GET_ME_QUERY);
+    const moreOnPress = (commentId: number) => {
+        if (commentClickedMore?.includes(commentId)){
+            const newCommentIds= commentClickedMore.filter((id: number) => id !== commentId );
+            setCommentClickedMore(newCommentIds);
+        } else {
+            const newCommentIds = [...commentClickedMore, commentId];
+            setCommentClickedMore(newCommentIds);
+        }
+    };
     const createCommentOnCompleted = (data: createComment) => {
         const { createComment: {
             ok, error
@@ -153,13 +159,6 @@ const OneDiary = ({navigation, route}: any) => {
                 {
                     text: "확인",
                     onPress: () => {
-                        // getComments({
-                        //     variables: {
-                        //         getAllCommentsInput: {
-                        //             diaryId: diary.id
-                        //         }
-                        //     }
-                        // });
                         refetch();
                     }
                 }
@@ -350,8 +349,16 @@ const OneDiary = ({navigation, route}: any) => {
                                 </SubmitContainer>
                             </CommentInputContainer>
                             {!commentsLoading? 
-                                commentsData?.getAllCommentsOfoneDiary.allComments?.map((comment: any) => (
-                                    <CommentContentContainer key={comment.id}>
+                                commentsData?.getAllCommentsOfoneDiary.allComments?.map((comment: any) => {
+                                    let abstractComment;
+                                    const commentLength = (comment.comment).split("\n").length;
+                                    if (commentLength > 2){
+                                        abstractComment = trimTextEol(comment.comment);
+                                    } else {
+                                        abstractComment = comment.comment;
+                                    };
+                                    return (
+                                    <CommentContentContainer key={comment.id} style={commentClickedMore?.includes(comment.id)? {height: HEIGHT/2}:{} }>
                                         <ProfileContainer>
                                             <ProfileImage 
                                                 source={{
@@ -365,21 +372,30 @@ const OneDiary = ({navigation, route}: any) => {
                                                 }}
                                             />
                                         </ProfileContainer>
-                                        <Text style={{ fontWeight: "700", position: "absolute", top: 5, left: 6}}>{comment.creator.name}</Text>
+                                        <Text style={{ fontWeight: "700", position: "absolute", top: 0, left: 6}}>{comment.creator.name}</Text>
                                         <CommentUserContentContainer>
-                                            <Text>{(comment.comment).split("\n").length > 2 ? trimTextEol(comment.comment)+ " 더 보기": comment.comment}</Text>
+                                            {commentLength >2 ? 
+                                                <>
+                                                    {commentClickedMore?.includes(comment.id) ? <Text>{comment.comment}</Text> : <Text>{abstractComment}</Text>}
+                                                    <MoreButton onPress={() => {
+                                                        moreOnPress(comment.id);
+                                                    }}/>
+                                                </>
+                                            : 
+                                                <Text>{abstractComment}</Text>
+                                            }
                                         </CommentUserContentContainer>
                                         {comment.creator.id === data?.getMe.id ? 
-                                                (
-                                                    <ButtonContainer key={comment.id}>
-                                                        <TouchableOpacity onPress={() => onDelete(comment.id)}>
-                                                            <Text style={{fontSize: 15}}>✕</Text>
-                                                        </TouchableOpacity>
-                                                    </ButtonContainer>
-                                                )
-                                            : (<></>)}
-                                    </CommentContentContainer>
-                                ))
+                                            (
+                                                <ButtonContainer key={comment.id}>
+                                                    <TouchableOpacity onPress={() => onDelete(comment.id)}>
+                                                        <Text style={{fontSize: 15}}>✕</Text>
+                                                    </TouchableOpacity>
+                                                </ButtonContainer>
+                                            )
+                                        : (<></>)}
+                                    </CommentContentContainer>)
+                            })
                             :
                             <Loading />
                             }

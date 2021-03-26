@@ -32,19 +32,10 @@ interface ICreateAccountFrom {
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
-const Container = styled.View`
-    flex-direction: column;
-    height: ${HEIGHT}px;
-    width:${WIDTH}px;
-    align-items:center;
-    justify-content: flex-start;
-    background-color: #F9F3F3;
-`;
 const TextContainer = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #FED048;
     border-radius: 7px;
     paddingVertical: 10px;
     paddingHorizontal: 80px;
@@ -53,7 +44,7 @@ const TextContainer = styled.View`
 `;
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
-    height: ${HEIGHT}px;
+    height: ${HEIGHT/1.2}px;
     background-color: #F9F3F3;
     justify-content: space-around;
     align-items: center;
@@ -133,9 +124,10 @@ const Join =  ({navigation, route}: any) => {
         <KeyboardAvoidingView>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <ScrollContainer>
-                    {!loading ?<InputsContainer>
+                    {!loading ?
+                    <InputsContainer>
                         <TextContainer>
-                            <Text>FooDiary 😋</Text>
+                            <Text>FooDiary</Text>
                         </TextContainer>
                         <InputContainer>
                             <Input 

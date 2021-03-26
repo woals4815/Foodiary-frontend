@@ -11,6 +11,7 @@ import { LOCALSTORAGE_TOKEN } from "../constants";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { ActivityIndicator, Dimensions, Keyboard } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import ScrollContainer from "../components/ScrollContainer";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -19,14 +20,13 @@ const Container = styled.View`
     height: ${HEIGHT}px;
     width:${WIDTH}px;
     align-items:center;
-    justify-content: flex-start;
+    justify-content: space-around;
     background-color: #F9F3F3;
 `
 const TextContainer = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #FED048;
     border-radius: 7;
     paddingVertical: 10;
     paddingHorizontal: 80;
@@ -35,13 +35,14 @@ const TextContainer = styled.View`
 `;
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
-    height: ${HEIGHT}px;
+    height: ${HEIGHT/1.2}px;
     background-color: #F9F3F3;
+    justify-content: space-around;
     align-items: center;
 `;
 const InputContainer = styled.View`
     width: ${WIDTH / 1.5}px;
-    height: ${HEIGHT / 3.5}px;
+    height: ${HEIGHT / 3}px;
     justify-content: space-around;
 `;
 const Text = styled.Text`
@@ -111,52 +112,53 @@ const Login =  () => {
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             {!loading ? 
-            <Container>
-                <InputsContainer>
-                <TextContainer>
-                    <Text>FooDiary</Text>
-                </TextContainer>
-                <InputContainer>
-                    <Input
-                        placeholder={"Email"}
-                        onChange={(text: string) => {
-                            setValue('email', text);
-                        }}
-                        register={register}
-                    />
-                    <Password
-                        placeholder={"Password"}
-                        onChange={(text: string) => {
-                            setValue('password', text);
-                        }}
-                        register={register}
-                    />
-                </InputContainer>
-                <JoinButton 
-                    title={"Log In"}
-                    onPress={handleSubmit(onSubmit)}
-                    buttonStyle={{
-                        backgroundColor: "#FED048",
-                        paddingHorizontal: 30,
-                        paddingVertical: 15,
-                        borderRadius: "8%",
-                        shadowColor: "#FED048",
-                        shadowOffset: {
-                            width: 0,
-                            height: 2
-                        },
-                        shadowOpacity: 0.7
-                    }}
-                    textStyle={{
-                        fontWeight: "700"
-                    }}
-                />
-            </InputsContainer>
-            </Container> : 
-            <Container>
-                <ActivityIndicator color="black" size="large" style={{marginTop: "75%"}} />
-            </Container>    
-            }
+                    <ScrollContainer>
+                        <InputsContainer>
+                            <TextContainer>
+                                <Text>FooDiary</Text>
+                            </TextContainer>
+                            <InputContainer>
+                                <Input
+                                    placeholder={"Email"}
+                                    onChange={(text: string) => {
+                                        setValue('email', text);
+                                    }}
+                                    register={register}
+                                />
+                                <Password
+                                    placeholder={"Password"}
+                                    onChange={(text: string) => {
+                                        setValue('password', text);
+                                    }}
+                                    register={register}
+                                />
+                            </InputContainer>
+                            <JoinButton 
+                                title={"Log In"}
+                                onPress={handleSubmit(onSubmit)}
+                                buttonStyle={{
+                                    backgroundColor: "#FED048",
+                                    paddingHorizontal: 30,
+                                    paddingVertical: 15,
+                                    borderRadius: "8%",
+                                    shadowColor: "#FED048",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 2
+                                    },
+                                    shadowOpacity: 0.7
+                                }}
+                                textStyle={{
+                                    fontWeight: "700"
+                                }}
+                            />
+                        </InputsContainer>
+                    </ScrollContainer>
+                    :
+                    <Container>
+                        <ActivityIndicator color="black" size="large" />
+                    </Container>    
+                    }
         </TouchableWithoutFeedback>
     )
 };

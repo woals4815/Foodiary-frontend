@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Dimensions, ScrollView, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { formatDate } from "../utils";
@@ -16,6 +16,8 @@ import ScrollContainer from "./ScrollContainer";
 import SubmitButton from "./SubmitButton";
 import * as MediaLibrary from 'expo-media-library';
 import axios from "axios";
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -75,7 +77,13 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
     const [isEditLoading, setIsEditLoading] = useState(false);
     const [keyword, setKeyword] = useState<any>();
     const [AddImages, setAddImages] = useState([]);
+    const [isZoom, setIsZoom] =useState(false);
+    const [clickedImage, setClickedImage] = useState<any>();
     const { getValues, setValue, errors, handleSubmit, register } = useForm();
+    const zoomImages = images.map((image) => {
+       return {url: image} 
+    });
+    console.log(zoomImages);
     const onCompleted = (data: deleteDiary) => {
         const { deleteDiary: {
             ok, error
@@ -112,7 +120,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
             setIsEdit(true);
         };
 
-    }
+    };
     const [deleteDiary, {data, error, loading}] = useMutation<deleteDiary, deleteDiaryVariables>(DELETE_DIARY_MUTATION, {
         onCompleted
     });
@@ -161,7 +169,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
             console.log(e);
             Alert.alert("수정에 실패 했습니다.");
         }
-    }
+    };
     const onPress = () => {
         Alert.alert("삭제 하시겠습니까?", "",[
             {
@@ -189,6 +197,15 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
         const paramsName = "DiaryCard";
         const {assets: images} = result;
         navigation.navigate("CameraRoll", {images, paramsName, diaryId});
+    };
+    const zoomOnPress = (imageId) => {
+        if (isZoom) {
+            setIsZoom(false);
+            setClickedImage(null);
+        }else {
+            setIsZoom(true);
+            setClickedImage(imageId);
+        }
     }
     useEffect(() => {
         register("description");
@@ -196,8 +213,8 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
             setAddImages(params?.selectImages);
         }
     }, [register, params?.selectImages]);
-    return (
-           <CardContainer>
+    return !isZoom ? (
+            <CardContainer>
                 <DateContainer>
                     <Text style={{fontSize: 30, fontWeight: "300"}}>{formatDate(createdAt)}</Text>
                 </DateContainer>
@@ -228,14 +245,16 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                     <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 7}} showsHorizontalScrollIndicator={false}>
                         <>
                             {images.map((image:any, index: any) => (
-                                <ImagePresenter 
-                                  imageUri={image} 
-                                  imageStyle={{width: WIDTH / 3, 
-                                  height: WIDTH / 3, 
-                                  marginRight: 15, 
-                                  borderRadius: 10,
-                                }} key={index} 
-                                />
+                                <TouchableOpacity onPress={() => zoomOnPress(index)} key={index}>
+                                    <ImagePresenter 
+                                    imageUri={image} 
+                                    imageStyle={{width: WIDTH / 3, 
+                                    height: WIDTH / 3, 
+                                    marginRight: 15, 
+                                    borderRadius: 10,
+                                    }} key={index} 
+                                    />
+                                </TouchableOpacity>
                             ))}
                             {AddImages?.length > 0 && params?.diaryId === diaryId ? AddImages?.map((image: any, index: any) =>
                                 <NewImageContainer key={index}> 
@@ -305,7 +324,10 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                     title={"Delete"}
                 />
            </CardContainer>
-    )
-}
+    ): 
+    <Modal visible={true} transparent={true}>
+        <ImageViewer imageUrls={zoomImages} onClick={zoomOnPress} enablePreload={true} index={clickedImage} />
+    </Modal>
+};
 
 export default DiaryCard;
