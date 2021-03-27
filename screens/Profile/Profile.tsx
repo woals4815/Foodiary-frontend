@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { useMutation, useQuery} from "@apollo/client/react/hooks";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, FlatList, KeyboardAvoidingView, Platform } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import JoinButton from "../../components/Button";
@@ -15,6 +15,8 @@ import * as MediaLibrary from 'expo-media-library';
 import axios from "axios";
 import Loading from "../../components/Loading";
 import Password from "../../components/Password";
+import { useAssets } from "expo-asset";
+import GooglePlacesInput from "../../components/LocationSearch";
 
 export const GET_ME_QUERY = gql`
     query getMe{
@@ -77,7 +79,7 @@ const ContentContainer = styled.View`
     box-shadow: 0px 0px 3px gray;
 `;
 const LabelContainer = styled.View`
-    width: 27%;
+    width: 33%;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
@@ -90,7 +92,7 @@ const LabelTitleContainer = styled.View`
     box-shadow: 0px 4px 4px gray;
 `;
 const DataContainer = styled.View`
-    width: 73%;
+    width: 67%;
     flex-direction: column;
     justify-content: space-around;
     paddingLeft: 10px;
@@ -132,6 +134,7 @@ const Profile = ({navigation, route: { params } }: any) => {
     const [existSelectImage, setExistSelectImage] = useState(params?.selectImages[0]); //이건 카메라롤 갔다 온 파람 저장용, useEffect로 계속 업데이트 시킴.
     const [emailKeyword, setEmailKeyword] = useState(myData?.getMe.email);
     const [nameKeyword, setNameKeyword] = useState(myData?.getMe.name);
+    const [assets] = useAssets([require("../../assets/blank-profile-picture-973460_640.png")]);
     const paramsName = "Profile";
     const onPressEdit = () => {
         if (isEdit){
@@ -245,7 +248,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                 </TouchableOpacity> 
                 : <ProfileImageContainer>
                     <ImagePresenter 
-                        imageUri={myData?.getMe.profilePic}
+                        imageUri={myData?.getMe.profilePic || assets[0].uri || "https://images.unsplash.com/photo-1587815073078-f636169821e3?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"}
                         imageStyle={{
                             borderRadius: WIDTH/3,
                         }}

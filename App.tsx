@@ -34,6 +34,7 @@ export default function App() {
     const images = cacheImages([
       "https://images.unsplash.com/photo-1572177191856-3cde618dee1f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=582&q=80",
       require("./assets/splash.png"),
+      require("./assets/blank-profile-picture-973460_640.png"),
     ]);
     const fonts = cacheFonts([Ionicons.font, FontAwesome.font]);
     await Promise.all([...images, ...fonts]);

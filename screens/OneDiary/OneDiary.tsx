@@ -1,24 +1,24 @@
-import { useApolloClient, useLazyQuery, useMutation, useQuery } from "@apollo/client/react/hooks";
+import { useMutation, useQuery } from "@apollo/client/react/hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
+import { ActivityIndicator, Alert, Dimensions, KeyboardAvoidingView, Platform, Modal } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
 import styled from "styled-components/native";
 import JoinButton from "../../components/Button";
-import DeleteButton from "../../components/DeleteButton";
 import ImagePresenter from "../../components/ImagePresenter";
 import Input from "../../components/Input";
 import Loading from "../../components/Loading";
 import MoreButton from "../../components/MoreButton";
 import ScrollContainer from "../../components/ScrollContainer";
-import { trimTextEol } from "../../utils";
+import { formatDate, trimTextEol } from "../../utils";
 import { createComment, createCommentVariables } from "../../__generated__/createComment";
 import { deleteComment, deleteCommentVariables } from "../../__generated__/deleteComment";
 import { getAllCommentsOfoneDiary, getAllCommentsOfoneDiaryVariables } from "../../__generated__/getAllCommentsOfoneDiary";
 import { getMe } from "../../__generated__/getMe";
 import { GET_ME_QUERY } from "../Profile/Profile";
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 
@@ -139,6 +139,11 @@ const OneDiary = ({navigation, route}: any) => {
     const [loading, setLoading] = useState(false);
     const [keyword, setKeyword] = useState("");
     const [commentClickedMore, setCommentClickedMore] = useState<any>([]);
+    const [isZoom, setIsZoom] =useState(false);
+    const [clickedImage, setClickedImage] = useState<any>();
+    const zoomImages = diary.images.map((image) => {
+        return {url: image} 
+     });
     const {data, loading: myLoading} = useQuery<getMe>(GET_ME_QUERY);
     const moreOnPress = (commentId: number) => {
         if (commentClickedMore?.includes(commentId)){
@@ -235,11 +240,20 @@ const OneDiary = ({navigation, route}: any) => {
             Alert.alert("오류가 발생했습니다.");
         }
     };
+    const zoomOnPress = (imageId) => {
+        if (isZoom) {
+            setIsZoom(false);
+            setClickedImage(null);
+        } else {
+            setIsZoom(true);
+            setClickedImage(imageId);
+        };
+    };
     useEffect(() => {
         register("comment");
         refetch();
     },[register, commentsData]);
-    return (
+    return !isZoom ? (
         <>
             <ScrollContainer
             refreshFn={refreshFn}
@@ -259,14 +273,16 @@ const OneDiary = ({navigation, route}: any) => {
                         }}
                     >
                     {diary.images.map((image: any, index: any) => (
-                        <ImagePresenter 
-                            imageUri={image}
-                            resizeMode={"contain"}
-                            key={index}
-                            imageStyle={{
-                                height: HEIGHT/2
-                            }}
-                        />
+                        <TouchableOpacity onPress={() => zoomOnPress(index)} key={index}>
+                            <ImagePresenter 
+                                imageUri={image}
+                                resizeMode={"contain"}
+                                key={index}
+                                imageStyle={{
+                                    height: HEIGHT/2
+                                }}
+                            />
+                        </TouchableOpacity>
                     ))}
                     </Swiper>
                 </ImageContainer>
@@ -293,11 +309,12 @@ const OneDiary = ({navigation, route}: any) => {
                 />
                 {!isAbstract && (
                     <KeyboardAvoidingView 
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        style={{
-                            flex: 1
-                        }}
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={{
+                        flex: 1
+                    }}
                     >
+                    <Text style={{position: "absolute", right: 0, top: -20, fontSize: 12}}>평점 {"😋".repeat(diary.rating)}</Text>
                     <ContentContainer>
                         <DescriptionContainer>
                             <ScrollContainer
@@ -349,7 +366,7 @@ const OneDiary = ({navigation, route}: any) => {
                                 </SubmitContainer>
                             </CommentInputContainer>
                             {!commentsLoading? 
-                                commentsData?.getAllCommentsOfoneDiary.allComments?.map((comment: any) => {
+                                commentsData?.getAllCommentsOfoneDiary.allComments?.slice(0).sort(function(a,b){return a.id-b.id}).reverse().map((comment: any) => {
                                     let abstractComment;
                                     const commentLength = (comment.comment).split("\n").length;
                                     if (commentLength > 2){
@@ -372,7 +389,7 @@ const OneDiary = ({navigation, route}: any) => {
                                                 }}
                                             />
                                         </ProfileContainer>
-                                        <Text style={{ fontWeight: "700", position: "absolute", top: 0, left: 6}}>{comment.creator.name}</Text>
+                                        <Text style={{ fontWeight: "700", position: "absolute", top: -8, left: 6}}>{comment.creator.name}</Text>
                                         <CommentUserContentContainer>
                                             {commentLength >2 ? 
                                                 <>
@@ -385,6 +402,7 @@ const OneDiary = ({navigation, route}: any) => {
                                                 <Text>{abstractComment}</Text>
                                             }
                                         </CommentUserContentContainer>
+                                        <Text style={{position: "absolute", right:0, bottom: 3, fontSize: 9, color: "rgba(0,0,0,0.4)"}}>{formatDate(comment.createdAt)}</Text>
                                         {comment.creator.id === data?.getMe.id ? 
                                             (
                                                 <ButtonContainer key={comment.id}>
@@ -405,6 +423,10 @@ const OneDiary = ({navigation, route}: any) => {
             </Container>
         </ScrollContainer>
         </>
+    ) : (
+        <Modal visible={true} transparent={true}>
+            <ImageViewer imageUrls={zoomImages} onClick={zoomOnPress} enablePreload={true} index={clickedImage} />
+        </Modal>
     )
 }
 

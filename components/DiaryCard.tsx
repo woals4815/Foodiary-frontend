@@ -69,6 +69,12 @@ const AddPhotoContainer = styled.View`
 
 const NewImageContainer = styled.View``;
 
+const RatingContainer = styled.View`
+    align-items: center;
+    flex-direction: row;
+    borderBottomWidth: 0.4px;
+`;
+
 const Text = styled.Text``;
 
 const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn, props}: any) => {
@@ -83,7 +89,6 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
     const zoomImages = images.map((image) => {
        return {url: image} 
     });
-    console.log(zoomImages);
     const onCompleted = (data: deleteDiary) => {
         const { deleteDiary: {
             ok, error
@@ -202,11 +207,11 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
         if (isZoom) {
             setIsZoom(false);
             setClickedImage(null);
-        }else {
+        } else {
             setIsZoom(true);
             setClickedImage(imageId);
-        }
-    }
+        };
+    };
     useEffect(() => {
         register("description");
         if (params?.selectImages) {
@@ -214,7 +219,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
         }
     }, [register, params?.selectImages]);
     return !isZoom ? (
-            <CardContainer>
+        <CardContainer>
                 <DateContainer>
                     <Text style={{fontSize: 30, fontWeight: "300"}}>{formatDate(createdAt)}</Text>
                 </DateContainer>
@@ -286,6 +291,10 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                         </>
                     </ScrollView>
                 </ImageContainer>
+                <RatingContainer>
+                    <Text style={{padding: 10, fontWeight: "700"}}>평점</Text>
+                    <Text>{"😋".repeat(rating)}</Text>
+                </RatingContainer>
                 <EditButton
                     title={isEdit ? "Cancel": "Edit"} 
                     buttonStyle={{
@@ -325,9 +334,11 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
                 />
            </CardContainer>
     ): 
-    <Modal visible={true} transparent={true}>
-        <ImageViewer imageUrls={zoomImages} onClick={zoomOnPress} enablePreload={true} index={clickedImage} />
-    </Modal>
+    (
+        <Modal visible={true} transparent={true}>
+            <ImageViewer imageUrls={zoomImages} onClick={zoomOnPress} enablePreload={true} index={clickedImage} />
+        </Modal> 
+    )
 };
 
 export default DiaryCard;

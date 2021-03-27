@@ -1,13 +1,16 @@
 import { gql } from "@apollo/client";
 import {useLazyQuery} from "@apollo/client/react/hooks";
+import { useAssets } from "expo-asset";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import ImagePresenter from "../../components/ImagePresenter";
+import GooglePlacesInput from "../../components/LocationSearch";
 import ScrollContainer from "../../components/ScrollContainer";
 import SearchInput from "../../components/SearchInput";
 import { searchUser, searchUserVariables } from "../../__generated__/searchUser";
+
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -38,6 +41,8 @@ const UserProfilePicContainer = styled.View`
     width: ${WIDTH/7}px;
     border-radius: ${WIDTH/7}px;
     box-shadow: 0px 0px 3px gray;
+    border: 0.3px;
+    borderColor: rgba(0,0,0,0.3);
 `;
 
 const UserContentContainer = styled.View`
@@ -66,9 +71,11 @@ export const SEARCH_USER_QUERY = gql`
     }
 `;
 
+
 const SearchUser = (props: any) => {
     const { navigation, route } = props;
     const [keyword, setKeyword] = useState("");
+    const [assets] = useAssets([require("../../assets/blank-profile-picture-973460_640.png")]);
     const [searchUser, {data, loading, error, refetch}] = useLazyQuery<searchUser, searchUserVariables>(SEARCH_USER_QUERY);
     return (
         <InputContainer>
@@ -111,11 +118,11 @@ const SearchUser = (props: any) => {
                     <SearchContainer>
                         {data?.searchUser.users?.map(user => (
                             <>
-                                <TouchableOpacity onPress={() => navigation.navigate("Person Diary", { id: user.id, name: user.name })}>
+                                <TouchableOpacity onPress={() => navigation.navigate("Person Diary", { id: user.id, name: user.name, profilePic: assets[0].uri })}>
                                     <UserContainer>
                                         <UserProfilePicContainer>
                                             <ImagePresenter 
-                                                imageUri={user.profilePic}
+                                                imageUri={user.profilePic ?? assets[0].uri}
                                                 imageStyle={{
                                                     height: (WIDTH / 7),
                                                     width: (WIDTH / 7),

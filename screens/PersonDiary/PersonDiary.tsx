@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client/react/hooks";
+import { useAssets } from "expo-asset";
 import React, { useLayoutEffect } from "react";
 import { Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -87,7 +88,7 @@ const LabelContainer = styled.View`
     align-items: center;
 `;
 const LabelStyleContainer = styled.View`
-    background-color: gray;
+    background-color: white;
     padding: 5px 10px;
     border-radius: 15px;
     box-shadow: 0px 0px 2px gray;
@@ -127,7 +128,7 @@ const PersonDiary = (props: any) => {
                             height: WIDTH / 4.1,
                             borderRadius: WIDTH / 4.1,
                         }}
-                        imageUri={!data?.userProfile.user?.profilePic ? "https://vicion-food.s3.ap-northeast-2.amazonaws.com/1615636113965IMG_0816.PNG": data.userProfile.user.profilePic}
+                        imageUri={!data?.userProfile.user?.profilePic ? params.profilePic || "https://images.unsplash.com/photo-1587815073078-f636169821e3?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80": data.userProfile.user.profilePic}
                     />
                 </UserPicContainer>
                 <UserInfoContainer>

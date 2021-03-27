@@ -11,6 +11,7 @@ import AddDiary from "../screens/AddDiary/AddDiary";
 import { Dimensions, Platform } from "react-native";
 import Profile from "../screens/Profile/Profile";
 import SearchUser from "../screens/Search/SearchUser";
+import Map from "../screens/Map/Map";
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -61,6 +62,7 @@ export default (props: any) => {
         >
             <Tabs.Screen name="Home" component={Home}/>
             <Tabs.Screen name="Search" component={SearchUser} />
+            <Tabs.Screen name="Map" component={Map} />
             <Tabs.Screen name="Add Diary" component={AddDiary} />
             <Tabs.Screen name="Profile" component={Profile} />
         </Tabs.Navigator>
