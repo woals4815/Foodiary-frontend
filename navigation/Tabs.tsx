@@ -49,6 +49,8 @@ export default (props: any) => {
                       iconName = "search";
                     } else if (route.name === "Profile") {
                       iconName = "ios-person";
+                    } else if(route.name === 'Map') {
+                      iconName = "pin";
                     }
                     return (
                       <Ionicons

@@ -30,6 +30,7 @@ export interface getMyDiaries_getMyDiaries_myDiaries {
   publicOrNot: boolean;
   description: string | null;
   createdAt: any;
+  address: string | null;
 }
 
 export interface getMyDiaries_getMyDiaries {

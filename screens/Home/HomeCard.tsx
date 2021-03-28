@@ -111,7 +111,7 @@ const HomeCard = ({diary}: any) => {
                         }}
                       >Description</Text>
                   </ContentLabelContainer>
-                  <ContentLabelContainer>
+                  {/* <ContentLabelContainer>
                       <Text
                       style={{
                         fontWeight: "500",
@@ -119,7 +119,7 @@ const HomeCard = ({diary}: any) => {
                         fontSize: 10
                     }}
                     >Comments</Text>
-                  </ContentLabelContainer>
+                  </ContentLabelContainer> */}
                   <ContentLabelContainer>
                       <Text
                         style={{
@@ -144,9 +144,9 @@ const HomeCard = ({diary}: any) => {
                           {trimText(diary.description, 40)}
                       </Text>
                   </ContentDataContentsContainer>
-                  <ContentDataContentsContainer>
-                      <Text>hi</Text>
-                  </ContentDataContentsContainer>
+                  {/* <ContentDataContentsContainer>
+                      <Text>{diary.comments}</Text>
+                  </ContentDataContentsContainer> */}
                   <ContentDataContentsContainer
                     style={{
                         justifyContent: "center"

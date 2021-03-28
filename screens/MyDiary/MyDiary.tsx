@@ -31,6 +31,7 @@ export const GET_MY_DIARIES_QUERY = gql`
                 publicOrNot
                 description
                 createdAt
+                address
             }
         }
     }
@@ -76,6 +77,7 @@ const MyDiary =  (props: any) => {
             contentContainerStyle={{
                 paddingVertical: 10,
                 paddingHorizontal: isList? 10 : 0,
+                paddingBottom: 60
             }}
         >
             <TouchableOpacity style={{zIndex: 10}} onPress={listPress}>
@@ -98,6 +100,7 @@ const MyDiary =  (props: any) => {
                         diaryId={diary.id}
                         refreshFn={refetch}
                         props={props}
+                        address={diary.address}
                     />
                 )): data?.getMyDiaries.myDiaries?.slice(0).sort(function(a,b){return a.id-b.id}).reverse().map(diary => (
                     <List 

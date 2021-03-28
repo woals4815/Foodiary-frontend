@@ -21,6 +21,7 @@ export interface CreateCommentInput {
 }
 
 export interface CreateDiaryInput {
+  address?: string | null;
   description?: string | null;
   images?: string[] | null;
   publicOrNot?: boolean | null;
@@ -41,6 +42,7 @@ export interface EditCommentInput {
 }
 
 export interface EditDiaryInput {
+  address?: string | null;
   description?: string | null;
   diaryId: number;
   images?: string[] | null;

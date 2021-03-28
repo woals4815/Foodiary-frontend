@@ -51,6 +51,7 @@ export const GET_ALL_DIARIES = gql`
                 rating
                 updatedAt
                 description
+                address
             }
         }
     }

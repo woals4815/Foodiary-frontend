@@ -39,6 +39,7 @@ export interface getAllDiaries_getAllDiaries_diaries {
   rating: number;
   updatedAt: any;
   description: string | null;
+  address: string | null;
 }
 
 export interface getAllDiaries_getAllDiaries {

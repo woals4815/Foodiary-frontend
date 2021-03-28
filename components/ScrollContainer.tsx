@@ -26,6 +26,8 @@ const ScrollContainer = ({ children, contentContainerStyle, loading, refreshFn,h
                 />
             }
             horizontal={horizontal}
+            nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
         >
             {loading? <ActivityIndicator color="black" size="small" />:children}
         </ScrollView>

@@ -57,6 +57,7 @@ const DescriptionContainer = styled.View`
 const DateContainer = styled.View`
     borderBottomWidth: 0.3px;
     padding: 10px 10px;
+    justify-content: space-around;
 `;
 const AddPhotoContainer = styled.View`
     width: ${WIDTH / 3}px;
@@ -77,7 +78,7 @@ const RatingContainer = styled.View`
 
 const Text = styled.Text``;
 
-const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn, props}: any) => {
+const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId,refreshFn, props, address}: any) => {
     const {navigation, route: {params}} = props;
     const [isEdit, setIsEdit] = useState(false);
     const [isEditLoading, setIsEditLoading] = useState(false);
@@ -222,6 +223,7 @@ const DiaryCard = ({images, description, rating, publicOrNot, createdAt, diaryId
         <CardContainer>
                 <DateContainer>
                     <Text style={{fontSize: 30, fontWeight: "300"}}>{formatDate(createdAt)}</Text>
+                    <Text style={{fontSize: 9, fontWeight: "300"}}>{JSON.parse(address).dataResult.description}</Text>
                 </DateContainer>
                 <DescriptionContainer>
                     <ScrollContainer contentContainerStyle={{
