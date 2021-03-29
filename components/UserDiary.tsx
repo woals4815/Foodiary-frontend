@@ -3,7 +3,7 @@ import React from "react";
 import { Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import { formatDate } from "../utils";
+import { formatAddress, formatDate } from "../utils";
 import ImagePresenter from "./ImagePresenter";
 
 
@@ -33,6 +33,7 @@ const UserDiary = ({diary}: any) => {
                     }}
                 />
                 <Text>{formatDate(diary.createdAt)}</Text>
+                <Text style={{fontSize: 8.5}}>{formatAddress(diary.address)}</Text>
             </Container>
         </TouchableOpacity>
     )

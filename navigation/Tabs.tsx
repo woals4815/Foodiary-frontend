@@ -30,9 +30,10 @@ export default (props: any) => {
         });
       }, [route]);
     const isLoggedIn = useReactiveVar(isLoggedInVar);
-    return isLoggedIn ? (
+    return isLoggedIn ? 
+    (
         <Tabs.Navigator
-            initialRouteName="Home"
+            initialRouteName={"Map"}
             activeColor="black"
             inactiveColor="gray"
             shifting={true}
@@ -88,7 +89,6 @@ export default (props: any) => {
                     name={iconName}
                     color={focused ? "black" : "grey"}
                     size={24}
-                    
                   />
                 );
               },

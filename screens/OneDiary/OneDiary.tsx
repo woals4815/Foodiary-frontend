@@ -200,8 +200,7 @@ const OneDiary = ({navigation, route}: any) => {
     });
     const {register, handleSubmit, setValue, getValues} = useForm();
     const refreshFn = () => {
-        setLoading(true);
-        setLoading(false);
+        refetch();
     };
     const onPress = () => {
         if (isAbstract) {
@@ -210,9 +209,9 @@ const OneDiary = ({navigation, route}: any) => {
             setIsAbsctract(true);
         }
     };
-    const onDelete = async(commentId: number) => {
+    const onDelete = (commentId: number) => {
         try{
-            await deleteComment({
+            deleteComment({
                 variables: {
                     deleteCommentInput: {
                         commentId
@@ -224,10 +223,10 @@ const OneDiary = ({navigation, route}: any) => {
             Alert.alert("삭제 실행 오류가 발생 했습니다.");
         }
     }
-    const onCommentPress = async() => {
+    const onCommentPress = () => {
         try{
             const { comment } = getValues();
-            await createComment({
+            createComment({
                 variables: {
                     createCommentInput: {
                         diaryId: diary.id,
@@ -251,8 +250,7 @@ const OneDiary = ({navigation, route}: any) => {
     };
     useEffect(() => {
         register("comment");
-        refetch();
-    },[register, commentsData]);
+    },[register]);
     return !isZoom ? (
         <>
             <ScrollContainer
@@ -407,7 +405,7 @@ const OneDiary = ({navigation, route}: any) => {
                                             (
                                                 <ButtonContainer key={comment.id}>
                                                     <TouchableOpacity onPress={() => onDelete(comment.id)}>
-                                                        <Text style={{fontSize: 15}}>✕</Text>
+                                                        <Text style={{fontSize: 16}}>✕</Text>
                                                     </TouchableOpacity>
                                                 </ButtonContainer>
                                             )

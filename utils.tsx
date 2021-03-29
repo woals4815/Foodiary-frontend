@@ -1,5 +1,3 @@
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
-
 export const formatDate = (date: any) => {
     const theDate = new Date(date);
     return theDate.toLocaleDateString("en", {
@@ -21,4 +19,9 @@ export const trimTextEol = (text = "") => {
     }
     const textStrip = text.split("\n")[0];
     return `${textStrip}\n`+ "...";    
+}
+
+export const formatAddress = (text = "") => {
+    const locationParse = JSON.parse(text).dataResult.structured_formatting.main_text;
+    return locationParse;
 }

@@ -32,6 +32,7 @@ export interface userProfile_userProfile_user_myDiaries {
   publicOrNot: boolean;
   rating: number;
   updatedAt: any;
+  address: string | null;
 }
 
 export interface userProfile_userProfile_user {

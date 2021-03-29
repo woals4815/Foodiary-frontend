@@ -211,7 +211,7 @@ const AddDiary =  (props: any) => {
         }
         register('description');
         register('rating');
-    }, [params?.selectImages, images, register]);
+    }, [params?.selectImages, register]);
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}

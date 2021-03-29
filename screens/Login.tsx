@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components/native";
 import Input from "../components/Input";
@@ -27,11 +27,10 @@ const TextContainer = styled.View`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 7;
-    paddingVertical: 10;
-    paddingHorizontal: 80;
+    border-radius: 7px;
+    paddingVertical: 10px;
+    paddingHorizontal: 80px;
     top: 20px;
-    box-shadow: 0px 2px 2px #FED048;
 `;
 const InputsContainer = styled.View`
     width: ${WIDTH}px;
@@ -69,6 +68,8 @@ const Login =  () => {
     const {setValue, errors, register, handleSubmit, getValues, formState} = useForm<ILoginForm>({
         mode: 'onChange'
     });
+    const [emailKeyword, setEmailKeyword] = useState<string>();
+    const [passwordKeyword, setPasswordKeyword] = useState<string>();
     const onCompleted = async(data: loginMutation) => {
             try{
             const {
@@ -94,8 +95,8 @@ const Login =  () => {
                 await loginMutation({
                     variables: {
                         loginInput: {
-                            email,
-                            password,
+                            email: emailKeyword ?? email,
+                            password: passwordKeyword ?? password,
                         }
                     }
                 });
@@ -122,6 +123,7 @@ const Login =  () => {
                                     placeholder={"Email"}
                                     onChange={(text: string) => {
                                         setValue('email', text);
+                                        setEmailKeyword(text);
                                     }}
                                     register={register}
                                 />
@@ -129,6 +131,7 @@ const Login =  () => {
                                     placeholder={"Password"}
                                     onChange={(text: string) => {
                                         setValue('password', text);
+                                        setPasswordKeyword(text);
                                     }}
                                     register={register}
                                 />

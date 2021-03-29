@@ -40,6 +40,7 @@ export const GET_USER_PROFILE_QUERY = gql`
                     publicOrNot
                     rating
                     updatedAt
+                    address
                 }
             }
         }

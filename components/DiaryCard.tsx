@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Dimensions, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { formatDate } from "../utils";
+import { formatAddress, formatDate } from "../utils";
 import { deleteDiary, deleteDiaryVariables } from "../__generated__/deleteDiary";
 import { editDiary, editDiaryVariables } from "../__generated__/editDiary";
 import DeleteButton from "./DeleteButton";

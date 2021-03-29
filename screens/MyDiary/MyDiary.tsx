@@ -67,9 +67,6 @@ const MyDiary =  (props: any) => {
             setIsList(true);
         }
     }
-    useEffect(() => {
-        refetch();
-    }, [data]);
     return (
         <ScrollContainer
             loading={loading}

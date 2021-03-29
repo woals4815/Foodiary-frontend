@@ -6,7 +6,6 @@ import { Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import ImagePresenter from "../../components/ImagePresenter";
-import GooglePlacesInput from "../../components/LocationSearch";
 import ScrollContainer from "../../components/ScrollContainer";
 import SearchInput from "../../components/SearchInput";
 import { searchUser, searchUserVariables } from "../../__generated__/searchUser";
