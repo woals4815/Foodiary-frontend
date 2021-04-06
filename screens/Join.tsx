@@ -110,7 +110,8 @@ const Join =  ({navigation, route}: any) => {
                         }
                     });
                  }catch(error){
-                     console.log(error);
+                    Alert.alert("비밀번호는 특수문자와 영문, 숫자를 포함한 최대 길이 20자로 작성해주시기 바랍니다.");
+                    console.log(error);
                  }
             }
     }
