@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Tabs from "./Tabs";
 import CameraRoll from "../screens/CameraRoll/CameraRoll";
 import MyDiary from "../screens/MyDiary/MyDiary";
-import Drawer from "./Drawer";
 import PersonDiary from "../screens/PersonDiary/PersonDiary";
 import OneDiary from "../screens/OneDiary/OneDiary";
 
@@ -17,7 +16,10 @@ export default () => (
                 borderBottomColor: "#F9F3F3",
                 shadowColor: "#F9F3F3",
             },
-            headerTitleAlign: "center"
+            headerTitleAlign: "center",
+            cardStyle: {
+                backgroundColor: "#F9F3F3"
+            }
         }}
     >
         <Stack.Screen name={"Tabs"} component={Tabs} />

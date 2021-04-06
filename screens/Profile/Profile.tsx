@@ -263,7 +263,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                                 paddingVertical: 10,
                                 paddingHorizontal: 10,
                                 backgroundColor: "white",
-                                borderRadius: "4px",
+                                borderRadius: 4,
                                 shadowColor: "gray",
                                     shadowOffset: {
                                         width: 0,
@@ -283,7 +283,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                             paddingVertical: 10,
                             paddingHorizontal: 10,
                             backgroundColor: "white",
-                            borderRadius: "4px",
+                            borderRadius: 4,
                             shadowColor: "gray",
                                 shadowOffset: {
                                     width: 0,
@@ -311,7 +311,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                                 <Text style={{fontSize: 10}}>New{"\n"}Password</Text>
                             </LabelTitleContainer>
                             <LabelTitleContainer>
-                                <Text style={{fontSize: 10}}>Confirm Password</Text>
+                                <Text style={{fontSize: 10}}>Confirm{"\n"}Password</Text>
                             </LabelTitleContainer>
                         </>
                         : <></>}
@@ -384,7 +384,7 @@ const Profile = ({navigation, route: { params } }: any) => {
                                 paddingVertical: 10,
                                 paddingHorizontal: 10,
                                 backgroundColor: "#FED048",
-                                borderRadius: "8px",
+                                borderRadius: 8,
                                 shadowColor: "gray",
                                     shadowOffset: {
                                         width: 0,

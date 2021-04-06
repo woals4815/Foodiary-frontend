@@ -2,8 +2,6 @@ import React from "react";
 import { Dimensions } from "react-native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
-
 const GooglePlacesInput = ({onPress}) => {
     return (
             <GooglePlacesAutocomplete
@@ -23,7 +21,7 @@ const GooglePlacesInput = ({onPress}) => {
                     };
                 }}
                 query={{
-                    key: "AIzaSyA5EIs-B3PN1V_b4Ib6-pCc9djVGtN26ho",
+                    key: "AIzaSyCnicwIWWlqNWvZcK2-BnkNcaPVOxVdM4U",
                     language: "ko"
                 }}
                 styles={{width: "100%", height: "100%"}}

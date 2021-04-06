@@ -85,10 +85,6 @@ const ButtonContainer = styled.View`
     width: 100%;
     padding: 5px 0px 0px 0px
 `;
-const ButtonText=styled.Text`
-    font-size: 20px;
-`;
-
 const CREATE_DIARY_MUTATION = gql`
     mutation createDiaryMutation($createDiaryMutationInput: CreateDiaryInput!){
         createDiary(input: $createDiaryMutationInput) {
@@ -279,7 +275,7 @@ const AddDiary =  (props: any) => {
                                         paddingVertical: 10,
                                         paddingHorizontal: 10,
                                         backgroundColor: "#FED048",
-                                        borderRadius: "8px",
+                                        borderRadius: 8,
                                         shadowColor: "#FED048",
                                             shadowOffset: {
                                                 width: 0,
@@ -300,7 +296,7 @@ const AddDiary =  (props: any) => {
                                         paddingVertical: 10,
                                         paddingHorizontal: 10,
                                         backgroundColor: "#FED048",
-                                        borderRadius: "8px",
+                                        borderRadius: 8,
                                         shadowColor: "#FED048",
                                             shadowOffset: {
                                                 width: 0,
@@ -354,7 +350,7 @@ const AddDiary =  (props: any) => {
                                     paddingVertical: 10,
                                     paddingHorizontal: 10,
                                     backgroundColor: "#FED048",
-                                    borderRadius: "8px",
+                                    borderRadius: 8,
                                     shadowColor: "#FED048",
                                         shadowOffset: {
                                             width: 0,

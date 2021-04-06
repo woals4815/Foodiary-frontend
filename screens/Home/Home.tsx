@@ -8,8 +8,6 @@ import HomeCard from "./HomeCard";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Loading from "../../components/Loading";
 
-
-
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
 const Container = styled.View`
@@ -60,7 +58,7 @@ export const GET_ALL_DIARIES = gql`
 export default (props: any) => {
   const {navigation, route} = props;
   const [topIndex, setTopIndex] = useState(0);
-  const [getAllDiaries ,{data, error, loading, refetch}] = useLazyQuery<getAllDiaries>(GET_ALL_DIARIES);
+  const [getAllDiaries ,{data, error, loading, refetch}] = useLazyQuery<getAllDiaries>(GET_ALL_DIARIES, {pollInterval: 3});
   const position = new Animated.ValueXY();
   const nextCard = () => setTopIndex((currentValue) => currentValue + 1);
   const onPress= async() => {
@@ -121,6 +119,7 @@ export default (props: any) => {
   }, [topIndex, route]);
   return !loading ? 
           <Container>
+            <Text style={{fontSize: 20,fontWeight: "200", position: "absolute", top: 15}}>랜덤 추천</Text>
             {!loading ? data?.getAllDiaries.diaries?.map((diary, index) => {
               if (topIndex === index + 1 && topIndex === data.getAllDiaries.diaries?.length) {
                 return (
@@ -203,6 +202,11 @@ export default (props: any) => {
             }) 
             : <ActivityIndicator color="white" size="large" />
             }
+            {data?.getAllDiaries.diaries?.length === 0 && (
+              <>
+                <Text style={{position: "absolute", top: HEIGHT/2.5, textAlign: "center"}}>아직 다이어리가 없습니다. {"\n\n"}당신이 첫 다이어리의 주인공입니다.</Text>
+              </>
+            )}
           </Container>
           : <Loading />
 }

@@ -62,6 +62,10 @@ export interface GetAllCommentsInput {
   diaryId: number;
 }
 
+export interface GetOneDiaryInput {
+  diaryId: number;
+}
+
 export interface LoginIntput {
   email: string;
   password: string;

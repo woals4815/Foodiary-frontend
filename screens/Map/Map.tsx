@@ -11,8 +11,6 @@ import { gql } from "@apollo/client";
 import { getDiariesByAddress, getDiariesByAddressVariables } from "../../__generated__/getDiariesByAddress";
 import ScrollContainer from "../../components/ScrollContainer";
 import ImagePresenter from "../../components/ImagePresenter";
-import { useAssets } from "expo-asset";
-
 
 const {width: WIDTH, height: HEIGHT} = Dimensions.get("window");
 
@@ -34,6 +32,35 @@ const GET_DIARIES_BY_ADDRESS_QUERY = gql`
     }
 `;
 
+const GET_ONE_DIARY_QUERY = gql`
+    query getOneDiary($getOneDiaryInput: GetOneDiaryInput!){
+        getOneDiary(input: $getOneDiaryInput){
+            ok
+            error
+            myDiary{
+                id
+                comments{
+                    id
+                    comment
+                    creator{
+                        id
+                        name
+                        createdAt
+                        updatedAt
+                    }
+                }
+                createdAt
+                description
+                images
+                publicOrNot
+                rating
+                updatedAt
+                address
+            }
+        }
+    }
+`;
+
 const Container = styled.View`
     flex: 1;
 `;
@@ -50,7 +77,6 @@ const NumberContainer = styled.View`
 const UserContainer = styled.View`
     flex-direction: row;
     align-items: center;
-    borderBottomWidth: 0.4px;
     paddingVertical: 5px;
     paddingHorizontal: 10px;
     background-color: white;
@@ -94,7 +120,7 @@ const Map = (props: any) => {
         const { data, error, } = useQuery<getDiariesByAddress,getDiariesByAddressVariables>(GET_DIARIES_BY_ADDRESS_QUERY, {
             variables: {
                 addressInput: address
-            }
+            },
         });
         if (data?.getDiariesByAddress.ok){
             diaries.push({diaries: data.getDiariesByAddress.diaries, address: address});
@@ -120,7 +146,6 @@ const Map = (props: any) => {
             setCardsDetail(diaries[index]);
         }
     };
-    const [assets] = useAssets([require("../../assets/blank-profile-picture-973460_640.png")]);
     return (
         <TouchableWithoutFeedback
             onPress={() => Keyboard.dismiss()}
@@ -202,7 +227,8 @@ const Map = (props: any) => {
                             cardsDetail.diaries.map((diary,index) => (
                                 <TouchableOpacity 
                                 onPress={() => {
-                                    navigation.navigate("Person Diary", { id: diary.creator.id, name: diary.creator.name, profilePic: assets[0].uri });
+                                    const diaryAll = data?.getAllDiaries.diaries?.filter((diaryAll) => diaryAll.id === diary.id);
+                                    navigation.navigate("One Diary", { /*id: diary.creator.id, name: diary.creator.name, profilePic: assets[0].uri*/ diary: diaryAll[0]});
                                     setCardsDetail(null);
                                     setModalVisible(false);
                                 }}
@@ -219,7 +245,7 @@ const Map = (props: any) => {
                                                 marginRight: 10
                                             }}
                                         />
-                                        <Text style={{fontSize: 20}}>{diary.creator.name} 님의 카드</Text>
+                                        <Text style={{fontSize: 15}}>{diary.creator.name} 님의 카드</Text>
                                     </UserContainer>
                                 </TouchableOpacity>
                             ))

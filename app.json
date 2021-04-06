@@ -5,10 +5,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "primaryColor": "#F9F3F3",
+    "backgroundColor": "#F9F3F3",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F9F3F3"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,13 +19,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vicion.foodiary",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#F9F3F3"
+      },
+      "package": "com.vicion.foodiary",
+      "versionCode": 1
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#F9F3F3"
+    },
+    "androidNavigationBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#F9F3F3"
     },
     "web": {
       "favicon": "./assets/favicon.png"

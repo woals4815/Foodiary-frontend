@@ -162,7 +162,7 @@ const Join =  ({navigation, route}: any) => {
                                 backgroundColor: "#FED048",
                                 paddingHorizontal: 30,
                                 paddingVertical: 15,
-                                borderRadius: "8px",
+                                borderRadius: 8,
                                 shadowColor: "#FED048",
                                 shadowOffset: {
                                     width: 0,

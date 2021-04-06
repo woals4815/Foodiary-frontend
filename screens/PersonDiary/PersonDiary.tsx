@@ -1,11 +1,8 @@
 import { gql } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client/react/hooks";
-import { useAssets } from "expo-asset";
 import React, { useLayoutEffect } from "react";
 import { Dimensions } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import DiaryCard from "../../components/DiaryCard";
 import ImagePresenter from "../../components/ImagePresenter";
 import ScrollContainer from "../../components/ScrollContainer";
 import UserDiary from "../../components/UserDiary";
@@ -156,10 +153,12 @@ const PersonDiary = (props: any) => {
             </UserProfileContinaer>
             <DiaryContainer>
                 {data?.userProfile.user?.myDiaries.map((diary: any) => (
-                    <UserDiary 
-                        diary={diary}
-                        key={diary.id}
-                    />
+                    <>
+                        <UserDiary 
+                            diary={diary}
+                            key={diary.id}
+                        />
+                    </>
                 ))}
             </DiaryContainer>
         </ScrollContainer>
