@@ -91,12 +91,26 @@ const Join =  ({navigation, route}: any) => {
                 }
             ]);
         }
+        if (error) {
+            Alert.alert(`You have this error`, `${error}`,[
+                {
+                    text: "Back",
+                    onPress: () => {
+                        return;
+                    }
+                }
+            ]);
+        };
     }
     const [createAccountMutation, {loading, data, error}] = useMutation<createAccountMutation, createAccountMutationVariables>(CREATE_ACCOUNT_MUTATION, {
         onCompleted
     });
     const onSubmit = async() => {
+        const passwordRegix = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{10,20}$/;
         const {email, name, password, confirmPassword} =  await getValues();
+            if (!passwordRegix.test(password)) {
+                Alert.alert("비밀번호는 특수문자와 영문, 숫자를 포함한 최대 길이 20자로 작성해주시기 바랍니다.");
+            };
             if (!loading){
                 try{
                     await createAccountMutation({
@@ -113,7 +127,7 @@ const Join =  ({navigation, route}: any) => {
                     Alert.alert("비밀번호는 특수문자와 영문, 숫자를 포함한 최대 길이 20자로 작성해주시기 바랍니다.");
                     console.log(error);
                  }
-            }
+            };
     }
     useEffect(() => {
         register('email');
